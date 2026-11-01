@@ -93,13 +93,13 @@ async function setupEnvelope(invitation) {
 
   let light;
   try {
-    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png');
+    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png', 'assets/namen.png');
   } catch {
     return remove();
   }
 
   const open = () => {
-    // zonlicht over folie en zegel → zegel breekt → kleppen open → zee met namen → de envelop in
+    // zonlicht over folie en zegel → zegel breekt → kleppen open → zee met namen → namen vliegen naar de site
     const step = (className, ms) => setTimeout(() => envelope.classList.add(className), ms);
     envelope.classList.add('lit');
     light.start();
@@ -109,13 +109,36 @@ async function setupEnvelope(invitation) {
     step('crack', 1450);
     step('open', 1800);
     step('names', 3100);
+    setTimeout(flyNames, 3900);
     step('zoom', 3900);
-    step('fade', 4500);
-    setTimeout(() => document.body.classList.remove('is-sealed'), 4500);
+    step('fade', 4100);
+    setTimeout(() => document.body.classList.remove('is-sealed'), 4300);
     setTimeout(() => {
       light.stop();
       remove();
     }, 5500);
+  };
+
+  // De namen op de zonsondergang schuiven naar hun plek bovenaan de site en kleuren mee van wit naar inkt.
+  const flyNames = () => {
+    const from = $('.env-inside-text .lettering');
+    const to = $('.hero-names');
+    document.body.classList.add('names-handoff');
+    const a = from.getBoundingClientRect();
+    const b = to.getBoundingClientRect();
+    const flight = document.createElement('span');
+    flight.className = 'lettering names-flight';
+    flight.setAttribute('aria-hidden', 'true');
+    Object.assign(flight.style, { left: `${a.left}px`, top: `${a.top}px`, width: `${a.width}px` });
+    document.body.append(flight);
+    from.style.visibility = 'hidden';
+    flight.getBoundingClientRect();
+    flight.classList.add('land');
+    Object.assign(flight.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px` });
+    setTimeout(() => {
+      document.body.classList.remove('names-handoff');
+      flight.remove();
+    }, 1650);
   };
   // ?envstate=lit,crack,open&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
   const params = new URLSearchParams(location.search);
@@ -180,12 +203,31 @@ async function showInvitation(invitation) {
 
 /* ---------- Secties ---------- */
 
-function photoHtml(src, className, emptyLabel) {
+function photoHtml(src, className, emptyLabel, focus) {
   if (!src && !CONTENT.showPhotoPlaceholders) return '';
+  const style = focus ? ` style="object-position:${focus.position};transform-origin:${focus.position};transform:scale(${focus.zoom ?? 1})"` : '';
   return `
     <figure class="photo ${className} reveal">
-      ${src ? `<img src="${src}" alt="Maaike en Bas" loading="lazy">` : `<figcaption class="photo-empty">${emptyLabel}</figcaption>`}
+      ${src ? `<img src="${src}" alt="Maaike en Bas" loading="lazy"${style}>` : `<figcaption class="photo-empty">${emptyLabel}</figcaption>`}
     </figure>`;
+}
+
+// Gestileerde zon: een cirkel met fijne stralen eromheen, met de foto in het midden.
+function sunPhotoHtml(src, focus) {
+  const rays = Array.from({ length: 48 }, (_, i) => {
+    const angle = (i / 48) * Math.PI * 2;
+    const outer = i % 2 ? 86 : 95;
+    const p = (r) => `${(Math.cos(angle) * r).toFixed(2)} ${(Math.sin(angle) * r).toFixed(2)}`;
+    return `M${p(77)}L${p(outer)}`;
+  }).join('');
+  return `
+    <div class="photo-sun reveal">
+      <svg class="sun-rays" viewBox="-100 -100 200 200" aria-hidden="true">
+        <circle r="72" fill="none" />
+        <path d="${rays}" />
+      </svg>
+      ${photoHtml(src, 'photo-sun-disc', 'Foto<br>jullie samen', focus)}
+    </div>`;
 }
 
 function renderSections(invitation, plural) {
@@ -213,7 +255,7 @@ function renderSections(invitation, plural) {
           <h2 class="title">Wij zeggen <em>ja</em></h2>
           <p class="lead">${escapeHtml(personalize(CONTENT.intro[invitation.type], plural))}</p>
         </div>
-        ${photoHtml(CONTENT.photos.portrait, 'photo-arch', 'Foto<br>jullie samen')}
+        ${sunPhotoHtml(CONTENT.photos.portrait, CONTENT.photos.portraitFocus)}
       </div>
     </section>
 

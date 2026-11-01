@@ -21,10 +21,13 @@ const G = {
   notch: [[614, 330], [585, 340], [572, 356], [580, 372], [595, 372]],
   foil: [[30, 565, 150, 245], [600, 560, 128, 260]], // schelp en blad: x, y, breedte, hoogte
   linen: [170, 190, 420, 150], // schoon stuk linnen, voor de binnenkant van de kleppen
+  letters: [312, 658, 148, 64], // de oorspronkelijke letters M&B op het zegel: x, y, breedte, hoogte
+  // M, & en B uit assets/namen.png (La Luxes Script): begin en eind in pixels
+  glyphs: { M: [14, 163], amp: [412, 512], B: [556, 685] },
   water: [[380, 20, 388, 130], [480, 1235, 288, 120]], // zee boven en onder de envelop, voor de schittering
 };
 
-export async function buildEnvelope(stage, src) {
+export async function buildEnvelope(stage, src, lettersSrc) {
   const img = new Image();
   img.src = src;
   await img.decode();
@@ -33,13 +36,17 @@ export async function buildEnvelope(stage, src) {
   const h = img.naturalHeight;
   const k = w / G.width;
   const scale = (v) => (Array.isArray(v) ? v.map(scale) : v * k);
-  const g = Object.fromEntries(Object.entries(G).map(([key, v]) => [key, scale(v)]));
+  const g = Object.fromEntries(Object.entries(G).map(([key, v]) => [key, key === 'glyphs' ? v : scale(v)]));
   const pct = (x, y) => `${((x / w) * 100).toFixed(3)}% ${((y / h) * 100).toFixed(3)}%`;
 
   stage.style.aspectRatio = `${w} / ${h}`;
   const scene = stage.querySelector('.env-scene');
 
   const original = canvasFrom(img, w, h);
+  const lettering = new Image();
+  lettering.src = lettersSrc;
+  await lettering.decode();
+  engraveMonogram(original, lettering, g, k);
   const originalData = original.getContext('2d').getImageData(0, 0, w, h);
 
   /* Kleppen: vlakken van de envelop; onder het zegel aangevuld met linnen */
@@ -156,6 +163,74 @@ export async function buildEnvelope(stage, src) {
       cancelAnimationFrame(frame);
     },
   };
+}
+
+// Vervangt de letters op het zegel door M&B in La Luxes, als in het goud gedrukt.
+function engraveMonogram(canvas, lettering, g, k) {
+  const ctx = canvas.getContext('2d');
+  const [lx, ly, lw, lh] = g.letters;
+
+  // 1. oude letters weg: elke kolom vloeit over van het goud erboven naar het goud eronder
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const { data, width } = image;
+  const top = Math.round(ly);
+  const bottom = Math.round(ly + lh);
+  const feather = 6 * k;
+  for (let x = Math.round(lx - feather); x <= lx + lw + feather; x++) {
+    const edge = Math.min(1, Math.min(x - (lx - feather), lx + lw + feather - x) / feather);
+    for (let y = top; y <= bottom; y++) {
+      const f = (y - top) / (bottom - top);
+      const i = (y * width + x) * 4;
+      const a = (top * width + x) * 4;
+      const b = (bottom * width + x) * 4;
+      for (let c = 0; c < 3; c++) data[i + c] = data[i + c] * (1 - edge) + (data[a + c] * (1 - f) + data[b + c] * f) * edge;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+
+  // 2. M, & en B uit de namen knippen en tot één monogram samenvoegen
+  const parts = [g.glyphs.M, g.glyphs.amp, g.glyphs.B];
+  const overlap = 18;
+  const glyphW = parts.reduce((sum, [a, b]) => sum + (b - a), 0) - overlap * (parts.length - 1);
+  const mono = makeCanvas(glyphW + 8, lettering.height);
+  const mctx = mono.getContext('2d');
+  let cursor = 4;
+  for (const [a, b] of parts) {
+    mctx.drawImage(lettering, a, 0, b - a, lettering.height, cursor, 0, b - a, lettering.height);
+    cursor += b - a - overlap;
+  }
+
+  // 3. in drie lagen op het zegel: schaduw, goud en een lichte rand bovenaan
+  const targetW = 150 * k;
+  const scale = targetW / mono.width;
+  const dw = mono.width * scale;
+  const dh = mono.height * scale;
+  const [sx, sy] = g.seal;
+  const dx = sx - dw / 2;
+  const dy = sy - dh / 2 + 4 * k;
+  const tint = (color) => {
+    const c = makeCanvas(mono.width, mono.height);
+    const tctx = c.getContext('2d');
+    tctx.drawImage(mono, 0, 0);
+    tctx.globalCompositeOperation = 'source-in';
+    tctx.fillStyle = color;
+    tctx.fillRect(0, 0, c.width, c.height);
+    return c;
+  };
+  const shadow = tint('rgba(92, 60, 18, 0.75)');
+  const body = tint('#a87a2c');
+  const light = tint('rgba(255, 241, 196, 0.9)');
+  const stamp = (layer, ox, oy) => {
+    // de lijnen zijn dun op dit formaat; een paar keer licht verschoven stempelen maakt ze voller
+    for (const [ax, ay] of [[0, 0], [0.5, 0], [0, 0.5], [0.5, 0.5]]) ctx.drawImage(layer, dx + (ox + ax) * k, dy + (oy + ay) * k, dw, dh);
+  };
+  ctx.save();
+  ctx.shadowColor = 'rgba(90, 60, 20, 0.35)';
+  ctx.shadowBlur = 2 * k;
+  stamp(shadow, 0.9, 1.2);
+  ctx.restore();
+  stamp(light, -0.7, -0.7);
+  stamp(body, 0, 0);
 }
 
 function pathOf(points) {
