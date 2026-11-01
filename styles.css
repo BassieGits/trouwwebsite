@@ -718,9 +718,10 @@ body.names-landed .hero-names { animation: none; }
 
 /* Het openen van de envelop is een korte animatie die de gast zelf start; die blijft staan. */
 @media (prefers-reduced-motion: reduce) {
-  :not(.envelope, .envelope *),
-  :not(.envelope, .envelope *)::before,
-  :not(.envelope, .envelope *)::after { animation: none !important; transition-duration: 0.01s !important; transition-delay: 0s !important; }
+  /* de opening (envelop en de namen die daaruit naar de site vliegen) speelt altijd af */
+  :not(.envelope, .envelope *, .names-flight),
+  :not(.envelope, .envelope *, .names-flight)::before,
+  :not(.envelope, .envelope *, .names-flight)::after { animation: none !important; transition-duration: 0.01s !important; transition-delay: 0s !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
   .env-hint { animation: none; }
