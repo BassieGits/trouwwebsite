@@ -266,14 +266,13 @@ body.names-landed .hero-names { animation: none; }
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 5.5%;
+  top: 62.5%; /* op de onderklep, net onder het zegel */
   margin: 0;
   text-align: center;
-  font: 500 10px var(--font-sans);
+  font: 500 clamp(10px, 2.8vw, 11px) var(--font-sans);
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: #fffaf2;
-  text-shadow: 0 1px 6px rgba(90, 60, 30, 0.55);
+  color: #8d8174;
   animation: breathe 2.8s ease-in-out infinite;
   transition: opacity 0.4s;
 }
@@ -724,5 +723,4 @@ body.names-landed .hero-names { animation: none; }
   :not(.envelope, .envelope *, .names-flight)::after { animation: none !important; transition-duration: 0.01s !important; transition-delay: 0s !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
-  .env-hint { animation: none; }
 }
