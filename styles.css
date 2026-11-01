@@ -395,6 +395,7 @@ body.is-sealed .hero > * { animation-play-state: paused; }
 .photo-wide img { object-position: 55% 40%; }
 
 /* Programma */
+.section-wide { max-width: 880px; }
 .timeline { list-style: none; margin: 40px auto 0; padding: 0; max-width: 360px; }
 .timeline li { position: relative; padding-bottom: 46px; }
 .timeline li:not(:last-child)::after {
@@ -405,10 +406,86 @@ body.is-sealed .hero > * { animation-play-state: paused; }
   height: 26px;
   border-left: 1px dashed var(--sand);
 }
+.timeline-photo {
+  margin: 0 auto 30px;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  outline: 1px solid var(--sand);
+  outline-offset: 8px;
+  background: var(--sand);
+}
+.timeline-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .timeline .icon { display: block; width: 40px; height: 40px; margin: 0 auto 10px; color: var(--sage-deep); }
 .timeline time { display: block; font: 300 34px/1 var(--font-serif); color: var(--ink); font-variant-numeric: lining-nums; }
 .timeline h3 { margin: 10px 0 0; font: 500 11px var(--font-sans); letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink); }
 .timeline p { margin: 4px 0 0; font: italic 300 19px/1.4 var(--font-serif); }
+
+@media (min-width: 820px) {
+  .timeline { max-width: 880px; margin-top: 56px; }
+  .timeline li.has-photo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 72px;
+    padding-bottom: 72px;
+  }
+  .timeline li.has-photo:nth-child(even) .timeline-photo { order: 2; }
+  .timeline li.has-photo .timeline-photo { width: 100%; margin: 0; aspect-ratio: 4 / 5; }
+  .timeline li:not(:last-child)::after { bottom: 20px; height: 32px; }
+}
+
+/* Happy moments */
+.polaroids {
+  display: flex;
+  gap: 18px;
+  margin: 44px calc(var(--gutter) * -1) 0;
+  padding: 14px var(--gutter) 30px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 var(--gutter);
+  scrollbar-width: none;
+}
+.polaroids::-webkit-scrollbar { display: none; }
+.polaroid { flex: 0 0 min(66vw, 260px); min-width: 0; scroll-snap-align: center; }
+.polaroid figure {
+  margin: 0;
+  padding: 11px 11px 0;
+  background: #fdfbf7;
+  box-shadow: 0 1px 2px rgba(47, 56, 51, 0.08), 0 12px 26px rgba(47, 56, 51, 0.13);
+  transform: rotate(var(--tilt, -1.5deg));
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.polaroid:nth-child(3n + 2) figure { --tilt: 1.8deg; }
+.polaroid:nth-child(3n) figure { --tilt: -0.6deg; }
+.polaroid:nth-child(4n) figure { --tilt: 2.4deg; }
+.polaroid-photo { display: block; aspect-ratio: 1; overflow: hidden; background: var(--sand); }
+.polaroid-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.polaroid figcaption {
+  padding: 10px 4px 14px;
+  font: 400 30px/1.1 var(--font-script);
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 820px) {
+  .polaroids {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 26px 22px;
+    max-width: 1120px;
+    margin: 56px auto 0;
+    padding: 10px 0 20px;
+    overflow: visible;
+  }
+  .polaroid { flex-basis: calc((100% - 4 * 22px) / 5); max-width: 210px; }
+  .polaroid:nth-child(even) { margin-top: 26px; }
+  .polaroid figure:hover { transform: rotate(0) scale(1.06); box-shadow: 0 2px 4px rgba(47, 56, 51, 0.1), 0 20px 40px rgba(47, 56, 51, 0.18); }
+  .polaroid figcaption { font-size: 24px; }
+}
 
 /* Locatie */
 .venue-name { margin: 10px 0 0; font: 300 clamp(36px, 10vw, 52px) / 1.1 var(--font-serif); color: var(--ink); }

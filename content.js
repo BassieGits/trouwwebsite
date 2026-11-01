@@ -27,16 +27,35 @@ export const CONTENT = {
     avond: 'Op vrijdag 25 juni 2027 zeggen wij ja tegen elkaar. \'s Avonds vieren we dat met een feest aan zee, en daar {mag} {jij} natuurlijk niet ontbreken.',
   },
 
-  // `dagOnly: true` zien alleen daggasten.
+  // `dagOnly: true` zien alleen daggasten. `photo` is optioneel.
   // TODO: tijden overdag zijn voorlopig; de avond begint om 20:15.
   program: [
-    { time: '13:30', title: 'Ontvangst', text: 'Welkom aan zee', icon: 'glasses', dagOnly: true },
-    { time: '14:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', dagOnly: true },
-    { time: '15:00', title: 'Toost & taart', text: 'Proosten op het bruidspaar', icon: 'cake', dagOnly: true },
-    { time: '18:00', title: 'Diner', text: 'Samen aan tafel', icon: 'dinner', dagOnly: true },
-    { time: '20:15', title: 'Avondfeest', text: 'Dansen tot de zon allang onder is', icon: 'music' },
-    { time: '01:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon' },
+    { time: '13:30', title: 'Ontvangst', text: 'Welkom aan zee', icon: 'glasses', photo: 'assets/sfeer-parasol.jpg', dagOnly: true },
+    { time: '14:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ligbedden.jpg', dagOnly: true },
+    { time: '15:00', title: 'Toost & taart', text: 'Proosten op het bruidspaar', icon: 'cake', photo: 'assets/moment-strandclub.jpg', dagOnly: true },
+    { time: '18:00', title: 'Diner', text: 'Samen aan tafel', icon: 'dinner', photo: 'assets/sfeer-lampions.jpg', dagOnly: true },
+    { time: '20:15', title: 'Avondfeest', text: 'Dansen tot de zon allang onder is', icon: 'music', photo: 'assets/sfeer-vuurkorf.jpg' },
+    { time: '01:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
   ],
+
+  // Onze happy moments: polaroids met een handgeschreven onderschrift.
+  // `position` bepaalt welk deel van de foto zichtbaar blijft (zoals CSS object-position).
+  moments: {
+    title: 'Onze happy moments',
+    intro: 'Van festivalweide tot strand, van scooter tot theaterstoel: een greep uit onze mooiste momenten samen. Op 25 juni komt daar de allermooiste bij.',
+    items: [
+      { src: 'assets/moment-strand.jpg', caption: 'Wind in de haren', position: '50% 40%' },
+      { src: 'assets/moment-scooter.jpg', caption: 'Samen op de scooter', position: '50% 45%' },
+      { src: 'assets/moment-festival.jpg', caption: 'Festivalliefde', position: '50% 35%' },
+      { src: 'assets/moment-roos.jpg', caption: 'Een gele roos', position: '50% 30%' },
+      { src: 'assets/moment-boot.jpg', caption: 'Op het water', position: '48% 48%', zoom: 1.5 },
+      { src: 'assets/moment-ei.jpg', caption: 'Gewoon even gek doen', position: '50% 50%' },
+      { src: 'assets/moment-herfst.jpg', caption: 'Herfstkus', position: '45% 45%' },
+      { src: 'assets/moment-feest.jpg', caption: 'Dansen tot het licht aangaat', position: '50% 55%' },
+      { src: 'assets/moment-theater.jpg', caption: 'Avondje uit', position: '50% 45%' },
+      { src: 'assets/moment-avond.jpg', caption: 'Nog één liedje', position: '50% 55%' },
+    ],
+  },
 
   dresscode: {
     title: 'Summer chic',

@@ -216,7 +216,7 @@ function renderSections(invitation, plural) {
     </section>
 
     <section class="section section-tint" id="programma">
-      <div class="section-inner">
+      <div class="section-inner section-wide">
         <div class="reveal">
           <p class="eyebrow">Programma</p>
           <h2 class="title">${isDay ? 'De dag' : 'De avond'}</h2>
@@ -225,11 +225,14 @@ function renderSections(invitation, plural) {
           ${program
             .map(
               (item) => `
-            <li class="reveal">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[item.icon] ?? ''}</svg>
-              <time>${item.time}</time>
-              <h3>${escapeHtml(item.title)}</h3>
-              <p>${escapeHtml(item.text)}</p>
+            <li class="reveal${item.photo ? ' has-photo' : ''}">
+              ${item.photo ? `<figure class="timeline-photo"><img src="${item.photo}" alt="" loading="lazy"></figure>` : ''}
+              <div class="timeline-text">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[item.icon] ?? ''}</svg>
+                <time>${item.time}</time>
+                <h3>${escapeHtml(item.title)}</h3>
+                <p>${escapeHtml(item.text)}</p>
+              </div>
             </li>`,
             )
             .join('')}
@@ -262,6 +265,8 @@ function renderSections(invitation, plural) {
 
     ${photoHtml(CONTENT.photos.landscape, 'photo-wide', 'Foto<br>jullie op het strand')}
 
+    ${renderMoments()}
+
     <section class="section" id="info">
       <div class="section-inner reveal">
         <p class="eyebrow">Goed om te weten</p>
@@ -293,6 +298,32 @@ function renderSections(invitation, plural) {
       <p class="lettering" role="img" aria-label="${escapeHtml(CONTENT.couple)}"></p>
       <p class="eyebrow">25 · 06 · 2027</p>
     </footer>`;
+}
+
+function renderMoments() {
+  const { moments } = CONTENT;
+  if (!moments?.items.length) return '';
+  return `
+    <section class="section section-tint" id="momenten">
+      <div class="section-inner reveal">
+        <p class="eyebrow">Wij samen</p>
+        <h2 class="title">${escapeHtml(moments.title)}</h2>
+        <p class="lead">${escapeHtml(moments.intro)}</p>
+      </div>
+      <ul class="polaroids">
+        ${moments.items
+          .map(
+            (item) => `
+          <li class="polaroid">
+            <figure>
+              <span class="polaroid-photo"><img src="${item.src}" alt="${escapeHtml(item.caption)}" loading="lazy" style="object-position:${item.position ?? '50% 50%'}${item.zoom ? `;transform:scale(${item.zoom})` : ''}"></span>
+              <figcaption>${escapeHtml(item.caption)}</figcaption>
+            </figure>
+          </li>`,
+          )
+          .join('')}
+      </ul>
+    </section>`;
 }
 
 function startCountdown() {
