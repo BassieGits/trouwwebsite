@@ -93,7 +93,7 @@ async function setupEnvelope(invitation) {
 
   let light;
   try {
-    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png', 'assets/namen.png');
+    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png');
   } catch {
     return remove();
   }
@@ -112,14 +112,15 @@ async function setupEnvelope(invitation) {
     step('crack', 1450);
     step('open', 1800);
     step('names', 3100);
-    setTimeout(flyNames, 3900);
-    step('zoom', 3900);
-    step('fade', 4100);
-    setTimeout(() => document.body.classList.remove('is-sealed'), 4300);
+    // de zonsondergang met jullie namen blijft even rustig in beeld
+    setTimeout(flyNames, 6800);
+    step('zoom', 6800);
+    step('fade', 7200);
+    setTimeout(() => document.body.classList.remove('is-sealed'), 7800);
     setTimeout(() => {
       light.stop();
       remove();
-    }, 5500);
+    }, 10000);
   };
 
   // De namen op de zonsondergang schuiven naar hun plek bovenaan de site en kleuren mee van wit naar inkt.
@@ -141,7 +142,7 @@ async function setupEnvelope(invitation) {
     setTimeout(() => {
       document.body.classList.remove('names-handoff');
       flight.remove();
-    }, 1650);
+    }, 2700);
   };
   // ?envstate=lit,crack,open&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
   const params = new URLSearchParams(location.search);
@@ -176,7 +177,7 @@ function prepareMusic(src) {
         const source = ctx.createBufferSource();
         const gain = ctx.createGain();
         const now = ctx.currentTime;
-        const volume = 0.22;
+        const volume = 0.07; // heel zacht, echt op de achtergrond
         gain.gain.setValueAtTime(0.0001, now);
         gain.gain.exponentialRampToValueAtTime(volume, now + 1.5);
         gain.gain.setValueAtTime(volume, now + 11);

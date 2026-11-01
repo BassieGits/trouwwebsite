@@ -1,6 +1,6 @@
 // Bouwt de strandenvelop (assets/envelop-strand.png) op in losse lagen:
 // achtergrond, vier kleppen met een linnen binnenkant, het zegel in twee helften
-// en een kaart van de rosé-gouden folie waarlangs het zonlicht loopt.
+// en een kaart van het blinddruk-reliëf (schelp en blad) waarlangs het zonlicht loopt.
 // De beweging zelf staat in styles.css; deze code knipt alleen de lagen uit.
 
 // Maten in pixels van de originele afbeelding (768 × 1376).
@@ -16,18 +16,15 @@ const G = {
   bottomTip: [386, 660],
   leftTip: [365, 695],
   rightTip: [409, 700],
-  seal: [385, 688, 114], // midden en straal
+  seal: [383, 686, 117], // midden en straal
   // het puntje van de pampaspluim valt over de vouwlijn van de bovenklep; dat stukje gaat mee met de rechterklep
   notch: [[614, 330], [585, 340], [572, 356], [580, 372], [595, 372]],
   foil: [[30, 565, 150, 245], [600, 560, 128, 260]], // schelp en blad: x, y, breedte, hoogte
   linen: [170, 190, 420, 150], // schoon stuk linnen, voor de binnenkant van de kleppen
-  letters: [312, 658, 148, 64], // de oorspronkelijke letters M&B op het zegel: x, y, breedte, hoogte
-  // M, & en B uit assets/namen.png (La Luxes Script): begin en eind in pixels
-  glyphs: { M: [14, 163], amp: [412, 512], B: [556, 685] },
   water: [[380, 20, 388, 130], [480, 1235, 288, 120]], // zee boven en onder de envelop, voor de schittering
 };
 
-export async function buildEnvelope(stage, src, lettersSrc) {
+export async function buildEnvelope(stage, src) {
   const img = new Image();
   img.src = src;
   await img.decode();
@@ -36,17 +33,13 @@ export async function buildEnvelope(stage, src, lettersSrc) {
   const h = img.naturalHeight;
   const k = w / G.width;
   const scale = (v) => (Array.isArray(v) ? v.map(scale) : v * k);
-  const g = Object.fromEntries(Object.entries(G).map(([key, v]) => [key, key === 'glyphs' ? v : scale(v)]));
+  const g = Object.fromEntries(Object.entries(G).map(([key, v]) => [key, scale(v)]));
   const pct = (x, y) => `${((x / w) * 100).toFixed(3)}% ${((y / h) * 100).toFixed(3)}%`;
 
   stage.style.aspectRatio = `${w} / ${h}`;
   const scene = stage.querySelector('.env-scene');
 
   const original = canvasFrom(img, w, h);
-  const lettering = new Image();
-  lettering.src = lettersSrc;
-  await lettering.decode();
-  engraveMonogram(original, lettering, g, k);
   const originalData = original.getContext('2d').getImageData(0, 0, w, h);
 
   /* Kleppen: vlakken van de envelop; onder het zegel aangevuld met linnen */
@@ -63,6 +56,11 @@ export async function buildEnvelope(stage, src, lettersSrc) {
     bottom: [g.bottomLeft, g.bottomTip, g.bottomRight],
     top: [g.topLeft, g.topRight, ...notch, g.topTip],
   };
+  // Heel papier onder de kleppen, zodat de kniplijnen tussen de kleppen niet doorschemeren zolang ze dicht zijn.
+  const under = makeCanvas(w, h);
+  under.getContext('2d').drawImage(paper, 0, 0);
+  under.className = 'env-layer env-paper';
+  scene.querySelector('.env-flaps').append(under);
   const linenTile = linenCanvas(original, g.linen);
   const linenUrl = linenTile.toDataURL('image/jpeg', 0.85);
 
@@ -90,7 +88,7 @@ export async function buildEnvelope(stage, src, lettersSrc) {
   }
 
   /* Zegel: goud uit de afbeelding geknipt, in twee helften langs een grillige breuk */
-  const sealMask = sealCanvas(original, originalData, sx, sy, sr, k);
+  const sealMask = sealCanvas(original, sx, sy, sr, k);
   const crack = [];
   for (let i = 0; i <= 10; i++) crack.push([sx + (i % 2 ? 7 : -6) * k * (i === 0 || i === 10 ? 0 : 1), sy - sr + (i / 10) * 2 * sr]);
   const halves = ['left', 'right'].map((side) => {
@@ -165,74 +163,6 @@ export async function buildEnvelope(stage, src, lettersSrc) {
   };
 }
 
-// Vervangt de letters op het zegel door M&B in La Luxes, als in het goud gedrukt.
-function engraveMonogram(canvas, lettering, g, k) {
-  const ctx = canvas.getContext('2d');
-  const [lx, ly, lw, lh] = g.letters;
-
-  // 1. oude letters weg: elke kolom vloeit over van het goud erboven naar het goud eronder
-  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const { data, width } = image;
-  const top = Math.round(ly);
-  const bottom = Math.round(ly + lh);
-  const feather = 6 * k;
-  for (let x = Math.round(lx - feather); x <= lx + lw + feather; x++) {
-    const edge = Math.min(1, Math.min(x - (lx - feather), lx + lw + feather - x) / feather);
-    for (let y = top; y <= bottom; y++) {
-      const f = (y - top) / (bottom - top);
-      const i = (y * width + x) * 4;
-      const a = (top * width + x) * 4;
-      const b = (bottom * width + x) * 4;
-      for (let c = 0; c < 3; c++) data[i + c] = data[i + c] * (1 - edge) + (data[a + c] * (1 - f) + data[b + c] * f) * edge;
-    }
-  }
-  ctx.putImageData(image, 0, 0);
-
-  // 2. M, & en B uit de namen knippen en tot één monogram samenvoegen
-  const parts = [g.glyphs.M, g.glyphs.amp, g.glyphs.B];
-  const overlap = 18;
-  const glyphW = parts.reduce((sum, [a, b]) => sum + (b - a), 0) - overlap * (parts.length - 1);
-  const mono = makeCanvas(glyphW + 8, lettering.height);
-  const mctx = mono.getContext('2d');
-  let cursor = 4;
-  for (const [a, b] of parts) {
-    mctx.drawImage(lettering, a, 0, b - a, lettering.height, cursor, 0, b - a, lettering.height);
-    cursor += b - a - overlap;
-  }
-
-  // 3. in drie lagen op het zegel: schaduw, goud en een lichte rand bovenaan
-  const targetW = 150 * k;
-  const scale = targetW / mono.width;
-  const dw = mono.width * scale;
-  const dh = mono.height * scale;
-  const [sx, sy] = g.seal;
-  const dx = sx - dw / 2;
-  const dy = sy - dh / 2 + 4 * k;
-  const tint = (color) => {
-    const c = makeCanvas(mono.width, mono.height);
-    const tctx = c.getContext('2d');
-    tctx.drawImage(mono, 0, 0);
-    tctx.globalCompositeOperation = 'source-in';
-    tctx.fillStyle = color;
-    tctx.fillRect(0, 0, c.width, c.height);
-    return c;
-  };
-  const shadow = tint('rgba(92, 60, 18, 0.75)');
-  const body = tint('#a87a2c');
-  const light = tint('rgba(255, 241, 196, 0.9)');
-  const stamp = (layer, ox, oy) => {
-    // de lijnen zijn dun op dit formaat; een paar keer licht verschoven stempelen maakt ze voller
-    for (const [ax, ay] of [[0, 0], [0.5, 0], [0, 0.5], [0.5, 0.5]]) ctx.drawImage(layer, dx + (ox + ax) * k, dy + (oy + ay) * k, dw, dh);
-  };
-  ctx.save();
-  ctx.shadowColor = 'rgba(90, 60, 20, 0.35)';
-  ctx.shadowBlur = 2 * k;
-  stamp(shadow, 0.9, 1.2);
-  ctx.restore();
-  stamp(light, -0.7, -0.7);
-  stamp(body, 0, 0);
-}
-
 function pathOf(points) {
   const p = new Path2D();
   points.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)));
@@ -277,47 +207,40 @@ function linenCanvas(original, [lx, ly, lw, lh]) {
   return c;
 }
 
-// Het gouden zegel: alles binnen de cirkel dat duidelijk goud is, met een zachte rand.
-function sealCanvas(original, originalData, cx, cy, r, k) {
+// Het zegel: een cirkel met een zachte rand (ivoor op wit linnen is niet op kleur te scheiden).
+function sealCanvas(original, cx, cy, r, k) {
   const { width: w, height: h } = original;
   const out = makeCanvas(w, h);
   const ctx = out.getContext('2d');
-  const image = ctx.createImageData(w, h);
-  const d = image.data;
-  const s = originalData.data;
-  for (let y = Math.floor(cy - r); y <= cy + r; y++) {
-    for (let x = Math.floor(cx - r); x <= cx + r; x++) {
-      const dist = Math.hypot(x - cx, y - cy);
-      if (dist > r) continue;
-      const i = (y * w + x) * 4;
-      const warm = s[i] - s[i + 2];
-      let a = Math.min(1, Math.max(0, (warm - 52) / 22));
-      if (dist < r - 30 * k) a = 1; // het midden met de letters altijd meenemen
-      a *= Math.min(1, (r - dist) / 3);
-      d[i] = s[i];
-      d[i + 1] = s[i + 1];
-      d[i + 2] = s[i + 2];
-      d[i + 3] = a * 255;
-    }
-  }
-  ctx.putImageData(image, 0, 0);
+  const soft = ctx.createRadialGradient(cx, cy, r - 3 * k, cx, cy, r);
+  soft.addColorStop(0, '#000');
+  soft.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = soft;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.drawImage(original, 0, 0);
   return out;
 }
 
-// De rosé-gouden lijntjes van schelp en blad: warmer en donkerder dan het linnen eromheen.
+// De lijnen van schelp en blad zijn blind in het papier gedrukt: ze vallen op doordat ze
+// lichter of donkerder zijn dan het papier vlak eromheen (hoogdoorlaat van de helderheid).
 function foilMask(originalData, g, w) {
   const s = originalData.data;
-  const on = new Uint8Array(s.length / 4);
-  const strength = new Uint8Array(s.length / 4);
+  const h = s.length / 4 / w;
+  const lum = new Float32Array(w * h);
+  for (let p = 0; p < w * h; p++) lum[p] = 0.3 * s[p * 4] + 0.59 * s[p * 4 + 1] + 0.11 * s[p * 4 + 2];
+  const r = Math.max(2, Math.round((5 * w) / 768));
+  const blurred = boxBlur(boxBlur(lum, w, h, r), w, h, r);
+  const on = new Uint8Array(w * h);
+  const strength = new Uint8Array(w * h);
   for (const [bx, by, bw, bh] of g.foil) {
     for (let y = Math.round(by); y < by + bh; y++) {
       for (let x = Math.round(bx); x < bx + bw; x++) {
         const p = y * w + x;
-        const i = p * 4;
-        const warm = s[i] - s[i + 2];
-        const lum = 0.3 * s[i] + 0.59 * s[i + 1] + 0.11 * s[i + 2];
-        const a = Math.min(1, Math.max(0, (warm - 52) / 25)) * Math.min(1, Math.max(0, (196 - lum) / 20));
-        if (a > 0.3) {
+        const a = Math.min(1, Math.max(0, (Math.abs(lum[p] - blurred[p]) - FOIL_THRESHOLD) / 6));
+        if (a > 0.25) {
           on[p] = 1;
           strength[p] = a * 255;
         }
@@ -326,8 +249,34 @@ function foilMask(originalData, g, w) {
   }
   return { on, strength };
 }
+const FOIL_THRESHOLD = 7;
 
-// Zoekt alle losse lijnen in de foliekaart en berekent per pixel wanneer het licht er aankomt.
+// Kastfilter: eerst horizontaal, dan verticaal, met een lopende som.
+function boxBlur(src, w, h, r) {
+  const tmp = new Float32Array(w * h);
+  const out = new Float32Array(w * h);
+  const size = 2 * r + 1;
+  for (let y = 0; y < h; y++) {
+    const row = y * w;
+    let sum = 0;
+    for (let x = -r; x <= r; x++) sum += src[row + Math.min(w - 1, Math.max(0, x))];
+    for (let x = 0; x < w; x++) {
+      tmp[row + x] = sum / size;
+      sum += src[row + Math.min(w - 1, x + r + 1)] - src[row + Math.max(0, x - r)];
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let sum = 0;
+    for (let y = -r; y <= r; y++) sum += tmp[Math.min(h - 1, Math.max(0, y)) * w + x];
+    for (let y = 0; y < h; y++) {
+      out[y * w + x] = sum / size;
+      sum += tmp[Math.min(h - 1, y + r + 1) * w + x] - tmp[Math.max(0, y - r) * w + x];
+    }
+  }
+  return out;
+}
+
+// Zoekt alle losse lijnen in de reliëfkaart en berekent per pixel wanneer het licht er aankomt.
 function traceRoutes({ on, strength }, w, h, g) {
   const [sx, sy] = g.seal;
   const dist = new Float32Array(w * h).fill(-1);
