@@ -112,15 +112,33 @@ async function setupEnvelope(invitation) {
     step('crack', 1450);
     step('open', 1800);
     step('names', 3100);
+    setTimeout(() => fillWithSunset(1), 2900);
     // de zonsondergang met jullie namen blijft even rustig in beeld
     setTimeout(flyNames, 6800);
-    step('zoom', 6800);
+    setTimeout(() => fillWithSunset(1.06), 6800);
     step('fade', 7200);
     setTimeout(() => document.body.classList.remove('is-sealed'), 7800);
     setTimeout(() => {
       light.stop();
       remove();
     }, 10000);
+  };
+
+  // De camera gaat de envelop in: de zonsondergang vult daarna het hele scherm.
+  const fillWithSunset = (extra) => {
+    const scene = $('.env-scene');
+    const inside = $('.env-inside');
+    // maten zonder de transformatie van de scène: de stage zelf beweegt niet, offset* negeert transforms
+    const sr = $('#env-stage').getBoundingClientRect();
+    const scale = Math.max(innerWidth / inside.offsetWidth, innerHeight / inside.offsetHeight) * extra;
+    const cx = inside.offsetLeft + inside.offsetWidth / 2;
+    const cy = inside.offsetTop + inside.offsetHeight / 2;
+    // de namen houden op elk scherm een prettige breedte, ook als de foto aan de zijkanten wegvalt
+    const names = $('.env-inside-text .lettering');
+    names.style.width = `${Math.min(innerWidth * 0.84, 560) / scale}px`;
+    $('.env-inside-date').style.fontSize = `${12 / scale}px`;
+    scene.style.transformOrigin = '0 0';
+    scene.style.transform = `translate(${innerWidth / 2 - sr.left - cx * scale}px, ${innerHeight / 2 - sr.top - cy * scale}px) scale(${scale})`;
   };
 
   // De namen op de zonsondergang schuiven naar hun plek bovenaan de site en kleuren mee van wit naar inkt.
@@ -140,16 +158,19 @@ async function setupEnvelope(invitation) {
     flight.classList.add('land');
     Object.assign(flight.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px` });
     setTimeout(() => {
+      // eerst de echte namen tonen (zonder hun eigen intro-animatie), dan pas de vliegende kopie weg
+      document.body.classList.add('names-landed');
       document.body.classList.remove('names-handoff');
-      flight.remove();
+      requestAnimationFrame(() => requestAnimationFrame(() => flight.remove()));
     }, 2700);
   };
-  // ?envstate=lit,crack,open&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
+  // ?envstate=lit,crack,open,names&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
   const params = new URLSearchParams(location.search);
   const preview = params.get('envstate');
   if (preview) {
     envelope.classList.add('no-anim', ...preview.split(','));
     if (preview.includes('lit')) light.render(Number(params.get('envt') ?? 1.2));
+    if (preview.includes('names')) fillWithSunset(1);
   }
 
   $('#seal').addEventListener('click', open, { once: true });
@@ -159,33 +180,18 @@ async function setupEnvelope(invitation) {
 }
 
 // Het riffje uit het begin van onze openingsdans: heel zacht bij het openen, daarna langzaam weg.
-// Via Web Audio, omdat iPhones het volume van een gewoon <audio>-element negeren.
+// Het zachte volume en de fades zitten in het bestand zelf. Zo kan het via een gewoon <audio>-element,
+// dat op iPhones ook speelt als de telefoon op stil staat (Web Audio blijft dan stil).
 function prepareMusic(src) {
-  const data = fetch(src)
-    .then((response) => response.arrayBuffer())
-    .catch(() => null);
+  const audio = new Audio(src);
+  audio.preload = 'auto';
+  audio.setAttribute('playsinline', '');
   return {
-    async play() {
+    play() {
       try {
-        // de context moet direct bij de tik ontstaan, anders blijft hij op iPhones stil
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioCtx();
-        ctx.resume();
-        const bytes = await data;
-        if (!bytes) return;
-        const buffer = await ctx.decodeAudioData(bytes.slice(0));
-        const source = ctx.createBufferSource();
-        const gain = ctx.createGain();
-        const now = ctx.currentTime;
-        const volume = 0.07; // heel zacht, echt op de achtergrond
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(volume, now + 1.5);
-        gain.gain.setValueAtTime(volume, now + 11);
-        gain.gain.linearRampToValueAtTime(0, now + buffer.duration);
-        source.buffer = buffer;
-        source.connect(gain).connect(ctx.destination);
-        source.start(now);
-        source.onended = () => ctx.close();
+        // nieuwere iPhones: geluid als mediaweergave behandelen, dus ook met de stille modus aan
+        if (navigator.audioSession) navigator.audioSession.type = 'playback';
+        audio.play().catch(() => {});
       } catch {
         // geen geluid is geen probleem; de opening werkt gewoon door
       }
