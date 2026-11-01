@@ -11,7 +11,7 @@ const comesDay = (a) => a === 'beide' || a === 'dag';
 const comesEvening = (a) => a === 'beide' || a === 'avond';
 
 let invitations = []; // { code, household, greeting, type, guests, plusOne }
-let rsvps = new Map(); // code → { guests, plusOne, song, message, submittedAt }
+let rsvps = new Map(); // code → { guests, plusOne, song, message, wish, submittedAt }
 let filter = 'all';
 let source;
 
@@ -237,6 +237,7 @@ function whatsappText(inv) {
 function renderLists() {
   const diets = [];
   const messages = [];
+  const wishes = [];
   for (const inv of invitations) {
     const rsvp = rsvps.get(inv.code);
     if (!rsvp) continue;
@@ -245,7 +246,9 @@ function renderLists() {
     }
     if (rsvp.song) messages.push(`<li><strong>${escapeHtml(inv.household)}</strong> 🎵 ${escapeHtml(rsvp.song)}</li>`);
     if (rsvp.message) messages.push(`<li><strong>${escapeHtml(inv.household)}</strong> ${escapeHtml(rsvp.message)}</li>`);
+    if (rsvp.wish) wishes.push(`<li><p>${escapeHtml(rsvp.wish)}</p><strong>${escapeHtml(inv.household)}</strong></li>`);
   }
+  $('#wishes').innerHTML = wishes.join('') || '<li class="muted">Nog geen wensen.</li>';
   $('#diets').innerHTML = diets.join('') || '<li class="muted">Nog geen dieetwensen.</li>';
   $('#messages').innerHTML = messages.join('') || '<li class="muted">Nog geen nummers of berichten.</li>';
 }
@@ -301,7 +304,7 @@ $('#add-form').addEventListener('submit', async (event) => {
 
 // Eén regel per persoon, met puntkomma's zodat Excel het in kolommen zet.
 $('#export').addEventListener('click', () => {
-  const rows = [['Huishouden', 'Naam', 'Uitgenodigd voor', 'Overdag', 'Avond', 'Afgemeld', 'Dieetwensen', 'Introducé', 'Code', 'Link']];
+  const rows = [['Huishouden', 'Naam', 'Uitgenodigd voor', 'Overdag', 'Avond', 'Afgemeld', 'Dieetwensen', 'Introducé', 'Wens voor jullie', 'Code', 'Link']];
   for (const inv of invitations) {
     const rsvp = rsvps.get(inv.code);
     const people = rsvp ? peopleOf(rsvp) : inv.guests.map((name) => ({ name }));
@@ -315,6 +318,7 @@ $('#export').addEventListener('click', () => {
         p.attendance === 'nee' ? 'ja' : '',
         p.diet ?? '',
         p.plusOne ? 'ja' : '',
+        p === people[0] ? rsvp?.wish ?? '' : '',
         inv.code,
         inviteLink(inv.code),
       ]);

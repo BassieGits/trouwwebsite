@@ -558,6 +558,10 @@ function renderForm(invitation, previous) {
         <label for="message">Nog iets dat we moeten weten? <span class="hint">(optioneel)</span></label>
         <textarea id="message" name="message">${escapeHtml(previous?.message)}</textarea>
       </div>
+      <div class="field wish-field">
+        <label for="wish">Een lieve boodschap of wens voor ons <span class="hint">(optioneel)</span></label>
+        <textarea id="wish" name="wish" rows="5" maxlength="2000" placeholder="Een wens, een mooie herinnering of een goed advies voor het bruidspaar…">${escapeHtml(previous?.wish)}</textarea>
+      </div>
 
       <p class="form-error" id="form-error" role="alert"></p>
       <button class="button" type="submit">Verstuur antwoord</button>
@@ -630,6 +634,7 @@ function readForm(form, invitation) {
       plusOne,
       song: data.get('song').trim(),
       message: data.get('message').trim(),
+      wish: data.get('wish').trim(),
     },
   };
 }
