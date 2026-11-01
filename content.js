@@ -11,7 +11,7 @@ export const CONTENT = {
   // Foto's: zet hier het pad naar een foto (bijv. 'assets/foto-strand.jpg').
   // Zolang er geen foto is, tonen we een lege lijst als voorbeeld van de plek.
   photos: {
-    portrait: 'assets/foto-portret.jpg', // staand, onder de uitnodigingstekst
+    portrait: 'assets/moment-roos.jpg', // staand, onder de uitnodigingstekst
     landscape: 'assets/foto-strand.jpg', // liggend, over de volle breedte
   },
   showPhotoPlaceholders: true,
@@ -47,7 +47,6 @@ export const CONTENT = {
       { src: 'assets/moment-strand.jpg', caption: 'Wind in de haren', position: '50% 40%' },
       { src: 'assets/moment-scooter.jpg', caption: 'Samen op de scooter', position: '50% 45%' },
       { src: 'assets/moment-festival.jpg', caption: 'Festivalliefde', position: '50% 35%' },
-      { src: 'assets/moment-roos.jpg', caption: 'Een gele roos', position: '50% 30%' },
       { src: 'assets/moment-boot.jpg', caption: 'Op het water', position: '48% 48%', zoom: 1.5 },
       { src: 'assets/moment-ei.jpg', caption: 'Gewoon even gek doen', position: '50% 50%' },
       { src: 'assets/moment-herfst.jpg', caption: 'Herfstkus', position: '45% 45%' },

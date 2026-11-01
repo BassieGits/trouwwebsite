@@ -93,29 +93,31 @@ async function setupEnvelope(invitation) {
 
   let light;
   try {
-    light = await buildEnvelope($('#env-stage'), 'assets/envelop.jpg');
+    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png');
   } catch {
     return remove();
   }
 
   const open = () => {
-    // lint weg en reliëf gloeit → flap open → licht → uitnodiging
+    // zonlicht over folie en zegel → zegel breekt → kleppen open → zee met namen → de envelop in
     const step = (className, ms) => setTimeout(() => envelope.classList.add(className), ms);
     envelope.classList.add('lit');
     light.start();
     try {
       sessionStorage.setItem('envelope-opened', '1');
     } catch {}
-    step('open', 2300);
-    step('flood', 3300);
-    step('fade', 3600);
-    setTimeout(() => document.body.classList.remove('is-sealed'), 3600);
+    step('crack', 1450);
+    step('open', 1800);
+    step('names', 3100);
+    step('zoom', 3900);
+    step('fade', 4500);
+    setTimeout(() => document.body.classList.remove('is-sealed'), 4500);
     setTimeout(() => {
       light.stop();
       remove();
-    }, 4700);
+    }, 5500);
   };
-  // ?envstate=lit,open&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
+  // ?envstate=lit,crack,open&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
   const params = new URLSearchParams(location.search);
   const preview = params.get('envstate');
   if (preview) {

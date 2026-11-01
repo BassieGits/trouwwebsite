@@ -23,17 +23,24 @@
     </symbol>
   </svg>
 
-  <!-- Envelop: wordt in envelope.js opgebouwd uit assets/envelop.jpg -->
+  <!-- Envelop: wordt in envelope.js opgebouwd uit assets/envelop-strand.png -->
   <div class="envelope" id="envelope">
     <div class="env-backdrop"></div>
     <div class="env-stage" id="env-stage">
-      <div class="env-inside"></div>
-      <div class="env-base-slot"></div>
-      <div class="env-flap">
-        <div class="env-flap-back"></div>
+      <div class="env-scene">
+        <div class="env-sea" aria-hidden="true"></div>
+        <div class="env-inside" aria-hidden="true">
+          <img src="assets/sfeer-zonsondergang.jpg" alt="">
+          <div class="env-inside-text">
+            <span class="lettering"></span>
+            <span class="env-inside-date">25 · 06 · 2027</span>
+          </div>
+        </div>
+        <div class="env-flaps"></div>
+        <div class="env-sheen" aria-hidden="true"></div>
+        <div class="env-glow-slot"></div>
+        <div class="env-seal"></div>
       </div>
-      <div class="env-ribbon-slot"></div>
-      <div class="env-light"></div>
       <p class="env-addressee" id="envelope-name"></p>
       <p class="env-hint">Tik op het zegel</p>
       <button class="env-seal-button" id="seal" type="button" aria-label="Open de uitnodiging"></button>
