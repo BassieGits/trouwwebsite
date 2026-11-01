@@ -98,7 +98,10 @@ async function setupEnvelope(invitation) {
     return remove();
   }
 
+  const music = prepareMusic('assets/riff.m4a');
+
   const open = () => {
+    music.play();
     // zonlicht over folie en zegel → zegel breekt → kleppen open → zee met namen → namen vliegen naar de site
     const step = (className, ms) => setTimeout(() => envelope.classList.add(className), ms);
     envelope.classList.add('lit');
@@ -152,6 +155,41 @@ async function setupEnvelope(invitation) {
   envelope.addEventListener('click', (event) => {
     if (event.target !== $('#seal') && !envelope.classList.contains('lit')) $('#seal').click();
   });
+}
+
+// Het riffje uit het begin van onze openingsdans: heel zacht bij het openen, daarna langzaam weg.
+// Via Web Audio, omdat iPhones het volume van een gewoon <audio>-element negeren.
+function prepareMusic(src) {
+  const data = fetch(src)
+    .then((response) => response.arrayBuffer())
+    .catch(() => null);
+  return {
+    async play() {
+      try {
+        // de context moet direct bij de tik ontstaan, anders blijft hij op iPhones stil
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        ctx.resume();
+        const bytes = await data;
+        if (!bytes) return;
+        const buffer = await ctx.decodeAudioData(bytes.slice(0));
+        const source = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        const now = ctx.currentTime;
+        const volume = 0.22;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(volume, now + 1.5);
+        gain.gain.setValueAtTime(volume, now + 11);
+        gain.gain.linearRampToValueAtTime(0, now + buffer.duration);
+        source.buffer = buffer;
+        source.connect(gain).connect(ctx.destination);
+        source.start(now);
+        source.onended = () => ctx.close();
+      } catch {
+        // geen geluid is geen probleem; de opening werkt gewoon door
+      }
+    },
+  };
 }
 
 function showCodeForm(error) {
