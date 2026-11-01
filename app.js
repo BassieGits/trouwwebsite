@@ -157,7 +157,18 @@ async function setupEnvelope(invitation) {
     flight.getBoundingClientRect();
     flight.classList.add('land');
     Object.assign(flight.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px` });
+    // het doel kan onderweg verschuiven (bijv. als de scrollbalk verschijnt); dan vliegen de namen mee
+    let target = b;
+    let follow = requestAnimationFrame(function track() {
+      const now = to.getBoundingClientRect();
+      if (Math.abs(now.left - target.left) + Math.abs(now.top - target.top) + Math.abs(now.width - target.width) > 0.5) {
+        target = now;
+        Object.assign(flight.style, { left: `${now.left}px`, top: `${now.top}px`, width: `${now.width}px` });
+      }
+      follow = requestAnimationFrame(track);
+    });
     setTimeout(() => {
+      cancelAnimationFrame(follow);
       // eerst de echte namen tonen (zonder hun eigen intro-animatie), dan pas de vliegende kopie weg
       document.body.classList.add('names-landed');
       document.body.classList.remove('names-handoff');
