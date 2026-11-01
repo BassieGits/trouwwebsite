@@ -12,7 +12,7 @@ export const CONTENT = {
   // Zolang er geen foto is, tonen we een lege lijst als voorbeeld van de plek.
   photos: {
     portrait: 'assets/moment-roos.jpg', // in de zon onder de uitnodigingstekst
-    portraitFocus: { position: '54% 22%', zoom: 1.5 }, // ingezoomd op de kus
+    portraitFocus: { position: '54% 22%', zoom: 1.3 }, // ingezoomd op de kus
     landscape: 'assets/foto-strand.jpg', // liggend, over de volle breedte
   },
   showPhotoPlaceholders: true,
