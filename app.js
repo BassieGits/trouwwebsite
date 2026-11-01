@@ -98,7 +98,7 @@ async function setupEnvelope(invitation) {
     return remove();
   }
 
-  const music = prepareMusic('assets/riff.m4a');
+  const music = prepareMusic('assets/strand-feestje.m4a');
 
   const open = () => {
     music.play();
@@ -179,7 +179,7 @@ async function setupEnvelope(invitation) {
   });
 }
 
-// Het riffje uit het begin van onze openingsdans: heel zacht bij het openen, daarna langzaam weg.
+// Strand bij zonsondergang met in de verte de riff van onze openingsdans: heel zacht bij het openen, daarna langzaam weg.
 // Het zachte volume en de fades zitten in het bestand zelf. Zo kan het via een gewoon <audio>-element,
 // dat op iPhones ook speelt als de telefoon op stil staat (Web Audio blijft dan stil).
 function prepareMusic(src) {
@@ -386,6 +386,7 @@ function renderSections(invitation, plural) {
     <footer class="footer">
       <p class="lettering" role="img" aria-label="${escapeHtml(CONTENT.couple)}"></p>
       <p class="eyebrow">25 · 06 · 2027</p>
+      <p class="credits">Strandgeluid: Beeld en Geluid (<a href="https://commons.wikimedia.org/wiki/File:De_branding_aan_het_strand_-_SoundCloud_-_Beeld_en_Geluid.ogg" target="_blank" rel="noopener">branding</a>, <a href="https://commons.wikimedia.org/wiki/File:Spelen_van_kinderen_aan_het_strand_-_SoundCloud_-_Beeld_en_Geluid.ogg" target="_blank" rel="noopener">strand</a>), CC BY-SA 3.0</p>
     </footer>`;
 }
 
