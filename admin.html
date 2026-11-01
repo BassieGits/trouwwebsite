@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Beheer · Maaike & Bas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+  <header class="admin-head">
+    <span class="lettering" role="img" aria-label="Maaike &amp; Bas"></span>
+    <p class="eyebrow">Beheer</p>
+    <button class="button button-ghost admin-logout" id="logout" type="button" hidden>Uitloggen</button>
+  </header>
+
+  <main class="admin-main">
+    <p class="admin-notice" id="notice" hidden></p>
+
+    <section class="admin-login" id="login" hidden>
+      <h1 class="title">Inloggen</h1>
+      <p>Vul je e-mailadres in. Je krijgt een link waarmee je direct bent ingelogd.</p>
+      <form id="login-form" class="admin-login-form">
+        <div class="field">
+          <label for="login-email">E-mailadres</label>
+          <input id="login-email" type="email" autocomplete="email" required>
+        </div>
+        <button class="button" type="submit">Stuur inloglink</button>
+        <p class="form-error" id="login-message" role="status"></p>
+      </form>
+    </section>
+
+    <div id="dashboard" hidden>
+      <section class="stats" id="stats"></section>
+
+      <section class="admin-section">
+        <div class="admin-section-head">
+          <h2 class="title">Uitnodigingen</h2>
+          <div class="admin-actions">
+            <button class="button button-ghost" id="export" type="button">Exporteer naar Excel</button>
+          </div>
+        </div>
+        <div class="filters" id="filters" role="tablist">
+          <button type="button" data-filter="all" class="active">Alle</button>
+          <button type="button" data-filter="open">Nog geen reactie</button>
+          <button type="button" data-filter="yes">Komen</button>
+          <button type="button" data-filter="no">Afgemeld</button>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table" id="invitations"></table>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2 class="title">Uitnodiging toevoegen</h2>
+        <form id="add-form" class="add-form">
+          <div class="field">
+            <label for="add-household">Naam huishouden <span class="hint">(voor jullie overzicht)</span></label>
+            <input id="add-household" required placeholder="Jan & Petra de Vries">
+          </div>
+          <div class="field">
+            <label for="add-guests">Voornamen gasten <span class="hint">(gescheiden door komma's)</span></label>
+            <input id="add-guests" required placeholder="Jan, Petra">
+          </div>
+          <div class="field">
+            <label for="add-greeting">Aanhef <span class="hint">(optioneel, anders de voornamen)</span></label>
+            <input id="add-greeting" placeholder="Familie de Vries">
+          </div>
+          <div class="field">
+            <label>Uitgenodigd voor</label>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="add-type" value="dag" checked><span>Dag &amp; avond</span></label>
+              <label class="choice"><input type="radio" name="add-type" value="avond"><span>Alleen avond</span></label>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="add-plus"> Mag een introducé meenemen</label>
+          <p class="form-error" id="add-error" role="alert"></p>
+          <button class="button" type="submit">Toevoegen</button>
+        </form>
+      </section>
+
+      <section class="admin-section admin-columns">
+        <div>
+          <h2 class="title">Dieetwensen</h2>
+          <ul class="plain-list" id="diets"></ul>
+        </div>
+        <div>
+          <h2 class="title">Muziek &amp; berichten</h2>
+          <ul class="plain-list" id="messages"></ul>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

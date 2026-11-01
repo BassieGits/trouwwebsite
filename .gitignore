@@ -1,0 +1,7 @@
+# Niet openbaar: werkbestanden, database-opzet (bevat e-mailadres) en losse bronbeelden
+.claude/
+supabase/
+image.png
+20181011_164444.jpg
+assets/save-the-date-*.png
+.DS_Store
