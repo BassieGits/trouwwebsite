@@ -32,10 +32,10 @@ export const CONTENT = {
   // Hoofdonderdelen uit de trouwplanner; de avondgasten zijn welkom vanaf 20:15, zoals op de save the night.
   program: [
     { time: '14:30', title: 'Ontvangst', text: 'Inloop vanaf 14:15, met een glas fizz aan zee', icon: 'glasses', photo: 'assets/sfeer-parasol.jpg', dagOnly: true },
-    { time: '15:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ligbedden.jpg', dagOnly: true },
-    { time: '16:00', title: 'Toost & borrel', text: 'Proosten, felicitaties en een borrel aan zee', icon: 'cake', photo: 'assets/moment-strandclub.jpg', dagOnly: true },
+    { time: '15:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ceremonie.jpg', dagOnly: true },
+    { time: '16:00', title: 'Toost & borrel', text: 'Proosten, felicitaties en een borrel aan zee', icon: 'cake', photo: 'assets/sfeer-vuurkorf.jpg', dagOnly: true },
     { time: '18:00', title: 'Walking dinner', text: 'Proeven en bijpraten, met live cooking', icon: 'dinner', photo: 'assets/sfeer-lampions.jpg', dagOnly: true },
-    { time: '20:15', title: 'Avondfeest', text: 'Om 20:45 de openingsdans, daarna dansen tot middernacht', icon: 'music', photo: 'assets/sfeer-vuurkorf.jpg' },
+    { time: '20:15', title: 'Avondfeest', text: 'Om 20:45 de openingsdans, daarna dansen tot middernacht', icon: 'music', photo: 'assets/sfeer-avondfeest.jpg' },
     { time: '24:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
   ],
 
