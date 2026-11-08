@@ -29,14 +29,14 @@ export const CONTENT = {
   },
 
   // `dagOnly: true` zien alleen daggasten. `photo` is optioneel.
-  // TODO: tijden overdag zijn voorlopig; de avond begint om 20:15.
+  // Hoofdonderdelen uit de trouwplanner; de avondgasten zijn welkom vanaf 20:15, zoals op de save the night.
   program: [
-    { time: '13:30', title: 'Ontvangst', text: 'Welkom aan zee', icon: 'glasses', photo: 'assets/sfeer-parasol.jpg', dagOnly: true },
-    { time: '14:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ligbedden.jpg', dagOnly: true },
-    { time: '15:00', title: 'Toost & taart', text: 'Proosten op het bruidspaar', icon: 'cake', photo: 'assets/moment-strandclub.jpg', dagOnly: true },
-    { time: '18:00', title: 'Diner', text: 'Samen aan tafel', icon: 'dinner', photo: 'assets/sfeer-lampions.jpg', dagOnly: true },
-    { time: '20:15', title: 'Avondfeest', text: 'Dansen tot de zon allang onder is', icon: 'music', photo: 'assets/sfeer-vuurkorf.jpg' },
-    { time: '01:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
+    { time: '14:30', title: 'Ontvangst', text: 'Inloop vanaf 14:15, met een glas fizz aan zee', icon: 'glasses', photo: 'assets/sfeer-parasol.jpg', dagOnly: true },
+    { time: '15:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ligbedden.jpg', dagOnly: true },
+    { time: '16:00', title: 'Toost & borrel', text: 'Proosten, felicitaties en een borrel aan zee', icon: 'cake', photo: 'assets/moment-strandclub.jpg', dagOnly: true },
+    { time: '18:00', title: 'Walking dinner', text: 'Proeven en bijpraten, met live cooking', icon: 'dinner', photo: 'assets/sfeer-lampions.jpg', dagOnly: true },
+    { time: '20:15', title: 'Avondfeest', text: 'Om 20:45 de openingsdans, daarna dansen tot middernacht', icon: 'music', photo: 'assets/sfeer-vuurkorf.jpg' },
+    { time: '24:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
   ],
 
   // Onze happy moments: polaroids met een handgeschreven onderschrift.

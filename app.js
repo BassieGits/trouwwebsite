@@ -689,8 +689,9 @@ function downloadCalendar(attending) {
 
   const icsDate = (date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const toUtc = (time, nextDay = false) => {
-    const date = new Date(`${CONTENT.date}T${time}:00${CONTENT.utcOffset}`);
-    if (nextDay) date.setUTCDate(date.getUTCDate() + 1);
+    const midnight = time === '24:00'; // niet elke browser leest 24:00 als tijdstip
+    const date = new Date(`${CONTENT.date}T${midnight ? '00:00' : time}:00${CONTENT.utcOffset}`);
+    if (nextDay || midnight) date.setUTCDate(date.getUTCDate() + 1);
     return icsDate(date);
   };
 
