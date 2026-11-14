@@ -9,6 +9,9 @@
   <meta name="description" content="Uitnodiging voor de bruiloft van Maaike & Bas op 25 juni 2027.">
   <meta property="og:title" content="Maaike & Bas gaan trouwen">
   <meta property="og:description" content="Vrijdag 25 juni 2027 · Strandclub Witsand, Noordwijk">
+  <!-- Plaatje dat WhatsApp en andere apps bij de link tonen. Moet een volledig adres zijn: aanpassen bij een eigen domein. -->
+  <meta property="og:image" content="https://bassiegits.github.io/trouwwebsite/assets/envelop-strand.png">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&family=Herr+Von+Muellerhoff&display=swap">
@@ -56,6 +59,9 @@
     <p class="hero-date" id="hero-date">Vrijdag 25 juni 2027</p>
     <p class="eyebrow hero-place" id="hero-place">Strandclub Witsand · Noordwijk</p>
 
+    <p class="load-problem" id="load-problem" hidden>De uitnodiging laadt niet goed. Open de link opnieuw, het liefst in Safari of Chrome op een recente telefoon of computer.</p>
+    <noscript><p class="load-problem">Deze uitnodiging werkt alleen met JavaScript aan. Open de link in Safari of Chrome.</p></noscript>
+
     <form class="code-form" id="code-form" hidden>
       <label for="code-input">Vul de code uit je uitnodiging in</label>
       <div class="code-row">
@@ -72,6 +78,17 @@
 
   <a class="rsvp-float" id="rsvp-float" href="#rsvp" hidden>RSVP</a>
 
+  <script>
+    // Vangnet: start de site niet (een heel oude browser, of een bestand dat niet laadt),
+    // dan blijft de gast niet achter een dichte envelop hangen maar ziet een melding.
+    setTimeout(function () {
+      if (window.appStarted) return;
+      var envelope = document.getElementById('envelope');
+      if (envelope) envelope.parentNode.removeChild(envelope);
+      document.body.className = '';
+      document.getElementById('load-problem').hidden = false;
+    }, 12000);
+  </script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

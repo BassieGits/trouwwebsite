@@ -79,7 +79,7 @@ export async function buildEnvelope(stage, src) {
     const mirrored = points.map(([x, y]) => (vertical ? [x, h - y] : [w - x, y]));
     const back = document.createElement('div');
     back.className = 'env-layer env-flap-back';
-    back.style.clipPath = `polygon(${mirrored.map(([x, y]) => pct(x, y).replace(' ', ' ')).join(', ')})`;
+    back.style.clipPath = `polygon(${mirrored.map(([x, y]) => pct(x, y)).join(', ')})`;
     back.style.backgroundImage = `linear-gradient(${vertical ? '180deg' : '90deg'}, rgba(255, 251, 243, 0.5), rgba(255, 251, 243, 0.15)), url(${linenUrl})`;
     back.style.backgroundSize = `100% 100%, ${((g.linen[2] / w) * 100).toFixed(2)}% auto`;
 
@@ -87,7 +87,7 @@ export async function buildEnvelope(stage, src) {
     scene.querySelector('.env-flaps').append(group);
   }
 
-  /* Zegel: goud uit de afbeelding geknipt, in twee helften langs een grillige breuk */
+  /* Zegel: uit de afbeelding geknipt, in twee helften langs een grillige breuk */
   const sealMask = sealCanvas(original, sx, sy, sr, k);
   const crack = [];
   for (let i = 0; i <= 10; i++) crack.push([sx + (i % 2 ? 7 : -6) * k * (i === 0 || i === 10 ? 0 : 1), sy - sr + (i / 10) * 2 * sr]);
@@ -108,7 +108,7 @@ export async function buildEnvelope(stage, src) {
   });
   scene.querySelector('.env-seal').append(...halves);
 
-  /* Zonlicht langs de folie: het licht vertrekt bij het punt het dichtst bij het zegel */
+  /* Zonlicht langs het reliëf: het licht vertrekt bij het punt het dichtst bij het zegel */
   const routes = traceRoutes(foilMask(originalData, g, w), w, h, g);
   const glow = makeCanvas(w, h);
   const bloom = makeCanvas(Math.round(w / 2), Math.round(h / 2));

@@ -61,8 +61,9 @@ body {
 
 /* ---------- Envelop ---------- */
 /* Opgebouwd uit assets/envelop-strand.png (zie envelope.js). Volgorde bij openen:
-   lit (zonlicht over de folie en het zegel) → crack (zegel breekt) → open (kleppen vouwen open,
-   doorkijk naar zee) → names → zoom (de camera gaat de envelop in) → fade. */
+   lit (zonlicht langs het reliëf en over het zegel) → crack (zegel breekt) → open (kleppen vouwen open,
+   doorkijk naar zee) → names (namen op de zonsondergang) → fade (overgang naar de site).
+   De camerabeweging de envelop in en het vliegen van de namen regelt app.js. */
 
 body.is-sealed { overflow: hidden; }
 body.is-sealed .hero > * { animation-play-state: paused; }
@@ -87,12 +88,13 @@ body.is-sealed .hero > * { animation-play-state: paused; }
   left: 50%;
   top: 50%;
   /* altijd de hele envelop in beeld, zodat schelp, blad en koraal niet wegvallen */
+  height: min(100vh, 100vw * 1376 / 768); /* voor browsers die svh nog niet kennen */
   height: min(100svh, 100vw * 1376 / 768);
   aspect-ratio: 768 / 1376;
   transform: translate(-50%, -50%);
 }
 @media (min-aspect-ratio: 768 / 1376) {
-  .env-stage { height: 96svh; box-shadow: 0 40px 90px -40px rgba(70, 50, 25, 0.55); }
+  .env-stage { height: 96vh; height: 96svh; box-shadow: 0 40px 90px -40px rgba(70, 50, 25, 0.55); }
 }
 .env-scene {
   position: absolute;
@@ -216,7 +218,7 @@ body.is-sealed .hero > * { animation-play-state: paused; }
 .envelope.open .env-flap-left > *,
 .envelope.open .env-flap-right > * { transition-delay: 0.55s; }
 
-/* B: zonlicht loopt langs de rosé-gouden folie (getekend in envelope.js) */
+/* B: zonlicht loopt langs het reliëf van schelp en blad (getekend in envelope.js) */
 .env-glow { filter: drop-shadow(0 0 1.5px rgba(255, 214, 170, 0.95)); }
 .env-bloom { filter: blur(5px) brightness(2.2); mix-blend-mode: screen; }
 .env-glow,
@@ -234,7 +236,6 @@ body.is-sealed .hero > * { animation-play-state: paused; }
 }
 .envelope.crack .env-seal-left { transform: translate(-7%, 26%) rotate(-24deg); opacity: 0; }
 .envelope.crack .env-seal-right { transform: translate(7%, 30%) rotate(20deg); opacity: 0; }
-
 
 /* De namen vliegen van de zonsondergang naar hun plek op de site */
 .names-flight {
@@ -278,6 +279,10 @@ body.names-landed .hero-names { animation: none; }
 }
 .envelope.lit .env-addressee,
 .envelope.lit .env-hint { opacity: 0; animation: none; }
+/* zolang de envelop nog wordt opgebouwd, is er niets om op te tikken */
+.envelope:not(.ready) .env-addressee,
+.envelope:not(.ready) .env-hint,
+.envelope:not(.ready) .env-seal-button { visibility: hidden; }
 
 .env-seal-button {
   position: absolute;
@@ -325,6 +330,7 @@ body.names-landed .hero-names { animation: none; }
 
 .hero {
   position: relative;
+  min-height: 100vh;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -389,6 +395,7 @@ body.names-landed .hero-names { animation: none; }
 }
 .code-row input:focus { outline: none; border-bottom-width: 2px; }
 .code-error { min-height: 1.8em; margin: 10px 0 0; font-size: 14px; color: #9a5a45; }
+.load-problem { max-width: 34ch; margin: 30px auto 0; font-size: 14px; color: #9a5a45; }
 
 /* ---------- Knoppen ---------- */
 
@@ -688,6 +695,9 @@ body.names-landed .hero-names { animation: none; }
 .plus-one-details { margin-top: 6px; }
 
 .form-error { min-height: 1.8em; margin: 18px 0 8px; font-size: 14px; color: #9a5a45; }
+.rsvp-status { margin: 0 0 18px; text-align: center; }
+.rsvp-status:last-child { margin-bottom: 0; }
+#retry-rsvp { width: 100%; }
 .rsvp-card form .button { width: 100%; }
 
 .confirmation { text-align: center; }

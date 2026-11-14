@@ -1,4 +1,4 @@
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, SITE_URL } from './config.js';
 import { isDemo, DEMO_INVITATIONS, demoRsvp } from './api.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -14,11 +14,12 @@ let invitations = []; // { code, household, greeting, type, guests, plusOne }
 let rsvps = new Map(); // code → { guests, plusOne, song, message, wish, submittedAt }
 let filter = 'all';
 let source;
+let shownExampleNotice = false;
 
 /* ---------- Databron: Supabase of demo ---------- */
 
 async function supabaseSource() {
-  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm');
+  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');
   const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const fail = (error) => {
     if (error) throw new Error(error.message);
@@ -143,6 +144,25 @@ async function refresh() {
   invitations = data.invitations;
   rsvps = new Map(data.rsvps.map((r) => [r.code, r]));
   render();
+  if (!isDemo) {
+    const examples = invitations.filter((inv) => inv.code in DEMO_INVITATIONS).length;
+    if (examples) {
+      notice(`Let op: er staan nog ${examples} voorbeelduitnodigingen in de lijst ("Voorbeeld: …"). Ze tellen mee in de aantallen. Verwijder ze voordat de echte uitnodigingen de deur uit gaan.`);
+    } else if (shownExampleNotice) {
+      $('#notice').hidden = true;
+    }
+    shownExampleNotice = examples > 0;
+  }
+}
+
+// Een actie die mislukt (verbinding weg, inlog verlopen) geeft een melding in plaats van stilte.
+async function attempt(action) {
+  try {
+    await action();
+  } catch (error) {
+    notice(`Dat lukte niet: ${error.message}. Herlaad de pagina en log zo nodig opnieuw in.`);
+    $('#notice').scrollIntoView({ block: 'center' });
+  }
 }
 
 /* ---------- Weergave ---------- */
@@ -191,8 +211,12 @@ function renderStats() {
   ].join('');
 }
 
+// De link voor een gast wijst altijd naar het openbare adres van de site (SITE_URL in config.js),
+// ook als je het beheer op je eigen computer opent. Anders zou een gast een link naar "localhost" krijgen.
+const siteUrl = (SITE_URL || `${location.origin}${location.pathname.replace(/admin\.html$/, '')}`).replace(/\/*$/, '/');
+
 function inviteLink(code) {
-  return `${location.origin}${location.pathname.replace(/admin\.html$/, '')}?c=${code}`;
+  return `${siteUrl}?c=${code}`;
 }
 
 function renderTable() {
@@ -266,16 +290,24 @@ $('#filters').addEventListener('click', (event) => {
 $('#invitations').addEventListener('click', async (event) => {
   const copy = event.target.closest('[data-copy]');
   if (copy) {
-    await navigator.clipboard.writeText(inviteLink(copy.dataset.copy));
-    copy.textContent = 'Gekopieerd';
-    setTimeout(() => (copy.textContent = 'Kopieer link'), 1500);
+    const link = inviteLink(copy.dataset.copy);
+    try {
+      await navigator.clipboard.writeText(link);
+      copy.textContent = 'Gekopieerd';
+      setTimeout(() => (copy.textContent = 'Kopieer link'), 1500);
+    } catch {
+      // kopiëren mag niet van de browser: dan de link tonen om zelf te kopiëren
+      prompt('Kopieer de link:', link);
+    }
   }
   const remove = event.target.closest('[data-remove]');
   if (remove) {
     const inv = invitations.find((i) => i.code === remove.dataset.remove);
     if (!confirm(`Uitnodiging voor ${inv.household} verwijderen? Een eventueel antwoord verdwijnt ook.`)) return;
-    await source.remove(inv.code);
-    await refresh();
+    await attempt(async () => {
+      await source.remove(inv.code);
+      await refresh();
+    });
   }
 });
 
@@ -304,7 +336,7 @@ $('#add-form').addEventListener('submit', async (event) => {
 
 // Eén regel per persoon, met puntkomma's zodat Excel het in kolommen zet.
 $('#export').addEventListener('click', () => {
-  const rows = [['Huishouden', 'Naam', 'Uitgenodigd voor', 'Overdag', 'Avond', 'Afgemeld', 'Dieetwensen', 'Introducé', 'Wens voor jullie', 'Code', 'Link']];
+  const rows = [['Huishouden', 'Naam', 'Uitgenodigd voor', 'Overdag', 'Avond', 'Afgemeld', 'Dieetwensen', 'Introducé', 'Muziekwens', 'Bericht', 'Wens voor jullie', 'Code', 'Link']];
   for (const inv of invitations) {
     const rsvp = rsvps.get(inv.code);
     const people = rsvp ? peopleOf(rsvp) : inv.guests.map((name) => ({ name }));
@@ -318,18 +350,22 @@ $('#export').addEventListener('click', () => {
         p.attendance === 'nee' ? 'ja' : '',
         p.diet ?? '',
         p.plusOne ? 'ja' : '',
+        p === people[0] ? rsvp?.song ?? '' : '',
+        p === people[0] ? rsvp?.message ?? '' : '',
         p === people[0] ? rsvp?.wish ?? '' : '',
         inv.code,
         inviteLink(inv.code),
       ]);
     }
   }
-  const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  // Begint een tekst met =, +, - of @, dan ziet Excel er een formule in; een apostrof ervoor voorkomt dat.
+  const text = (cell) => String(cell).replace(/^(?=[=+\-@\t\r])/, "'");
+  const csv = rows.map((row) => row.map((cell) => `"${text(cell).replace(/"/g, '""')}"`).join(';')).join('\r\n');
   const link = document.createElement('a');
   link.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
   link.download = 'gastenlijst-maaike-en-bas.csv';
   link.click();
-  URL.revokeObjectURL(link.href);
+  setTimeout(() => URL.revokeObjectURL(link.href), 10000);
 });
 
-init().catch((error) => notice(`Er ging iets mis: ${error.message}`));
+init().catch((error) => notice(`Er ging iets mis: ${error.message}. Herlaad de pagina om het opnieuw te proberen.`));

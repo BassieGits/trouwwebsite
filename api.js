@@ -6,18 +6,27 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 
 export const isDemo = !SUPABASE_URL || !SUPABASE_ANON_KEY;
 
+// Nieuwe sleutels (sb_publishable_...) horen alleen in de apikey-kop; de oudere sleutels (een lange reeks
+// die met eyJ begint) verwacht Supabase daarnaast ook in Authorization.
+const headers = { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
+if (SUPABASE_ANON_KEY.startsWith('eyJ')) headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+
 async function rpc(name, args) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
-    method: 'POST',
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(args),
-  });
-  if (!response.ok) throw new Error(`${name} mislukt (${response.status})`);
-  return response.json();
+  // na 15 seconden opgeven, zodat een gast een melding krijgt in plaats van eindeloos te wachten
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/rpc/${name}`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(args),
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`${name} mislukt (${response.status})`);
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /* ---------- Demomodus ---------- */

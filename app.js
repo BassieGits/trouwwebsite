@@ -47,25 +47,37 @@ function personalize(text, plural) {
 
 /* ---------- Start ---------- */
 
+// Een code bestaat alleen uit letters en cijfers. Zo werkt een link ook als er per ongeluk
+// een punt, spatie of haakje achter is blijven hangen.
+const cleanCode = (value) => (value ?? '').replace(/[^a-z0-9]/gi, '');
+
+const LOAD_ERROR = 'De uitnodiging kon even niet geladen worden. Controleer je internetverbinding en probeer het opnieuw.';
+
 async function init() {
+  window.appStarted = true; // voor het vangnet in index.html
+  $('#load-problem').hidden = true;
+
   const params = new URLSearchParams(location.search);
-  const code = params.get('c') || params.get('code');
+  const code = cleanCode(params.get('c') || params.get('code'));
+  const loading = code ? getInvitation(code) : Promise.resolve(null);
+
+  // De envelop wordt al opgebouwd terwijl de uitnodiging laadt; de naam komt erbij zodra die er is.
+  setupEnvelope(loading.catch(() => null));
+
   let invitation = null;
   let loadFailed = false;
   try {
-    invitation = code ? await getInvitation(code) : null;
+    invitation = await loading;
   } catch {
     loadFailed = true;
   }
-
-  setupEnvelope(invitation);
 
   if (invitation) {
     showInvitation(invitation);
   } else {
     showCodeForm(
       loadFailed
-        ? 'De uitnodiging kon even niet geladen worden. Probeer het later opnieuw.'
+        ? LOAD_ERROR
         : code
           ? 'Deze code kennen we helaas niet. Controleer de link in je bericht.'
           : '',
@@ -74,8 +86,9 @@ async function init() {
 }
 
 // Het envelop opent eenmalig per bezoek; daarna gaan gasten direct naar de uitnodiging.
-async function setupEnvelope(invitation) {
+async function setupEnvelope(invitationLoading) {
   const envelope = $('#envelope');
+  if (!envelope) return document.body.classList.remove('is-sealed'); // het vangnet heeft hem al weggehaald
   const remove = () => {
     envelope.remove();
     document.body.classList.remove('is-sealed');
@@ -87,16 +100,19 @@ async function setupEnvelope(invitation) {
   } catch {}
   if (opened) return remove();
 
-  if (invitation) {
-    $('#envelope-name').textContent = `voor ${invitation.greeting ?? joinNames(invitation.guests)}`;
-  }
+  invitationLoading.then((invitation) => {
+    if (invitation) $('#envelope-name').textContent = `voor ${invitation.greeting || joinNames(invitation.guests)}`;
+  });
 
+  // Lukt het opbouwen niet (of duurt het te lang), dan gaat de gast zonder envelop door naar de uitnodiging.
   let light;
   try {
-    light = await buildEnvelope($('#env-stage'), 'assets/envelop-strand.png');
+    const tooSlow = new Promise((_, reject) => setTimeout(() => reject(new Error('envelop te traag')), 10000));
+    light = await Promise.race([buildEnvelope($('#env-stage'), 'assets/envelop-strand.png'), tooSlow]);
   } catch {
     return remove();
   }
+  envelope.classList.add('ready'); // nu pas "Tik op het zegel" tonen
 
   const music = prepareMusic('assets/strand-feestje.m4a');
 
@@ -217,8 +233,15 @@ function showCodeForm(error) {
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const code = $('#code-input').value.trim();
-    const invitation = await getInvitation(code).catch(() => null);
+    const code = cleanCode($('#code-input').value);
+    if (!code) return;
+    let invitation;
+    try {
+      invitation = await getInvitation(code);
+    } catch {
+      $('#code-error').textContent = LOAD_ERROR;
+      return;
+    }
     if (!invitation) {
       $('#code-error').textContent = 'Deze code kennen we helaas niet. Controleer je uitnodiging.';
       return;
@@ -234,7 +257,7 @@ async function showInvitation(invitation) {
   const isDay = invitation.type === 'dag';
   const eveningStart = CONTENT.program.find((item) => !item.dagOnly).time;
 
-  $('#greeting').textContent = `Lieve ${invitation.greeting ?? joinNames(invitation.guests)}`;
+  $('#greeting').textContent = `Lieve ${invitation.greeting || joinNames(invitation.guests)}`;
   if (!isDay) {
     $('.hero-lead').textContent = 'Wij gaan trouwen en geven een feest';
     $('#hero-place').textContent = `Strandclub Witsand · vanaf ${eveningStart}`;
@@ -249,11 +272,26 @@ async function showInvitation(invitation) {
   setupReveal();
   setupFloatingRsvp();
 
-  const rsvp = await getRsvp(invitation.code);
-  if (rsvp) {
-    renderConfirmation(invitation, rsvp);
-  } else {
-    renderForm(invitation);
+  loadRsvp(invitation);
+}
+
+// Haalt een eerder gegeven antwoord op. Lukt dat niet, dan tonen we geen leeg formulier
+// (dat zou een eerder antwoord ongemerkt kunnen overschrijven) maar een melding met een knop om het opnieuw te proberen.
+async function loadRsvp(invitation) {
+  const card = $('#rsvp-card');
+  card.innerHTML = '<p class="rsvp-status">Even geduld…</p>';
+  try {
+    const rsvp = await getRsvp(invitation.code);
+    if (rsvp) {
+      renderConfirmation(invitation, rsvp);
+    } else {
+      renderForm(invitation);
+    }
+  } catch {
+    card.innerHTML = `
+      <p class="rsvp-status">Het formulier kon niet geladen worden. Controleer je internetverbinding.</p>
+      <button class="button" type="button" id="retry-rsvp">Probeer opnieuw</button>`;
+    $('#retry-rsvp').addEventListener('click', () => loadRsvp(invitation));
   }
 }
 
@@ -485,10 +523,11 @@ function setupFloatingRsvp() {
 
 /* ---------- RSVP-formulier ---------- */
 
-function choicesHtml(name, type, selected) {
+function choicesHtml(name, type, selected, { withDecline = true } = {}) {
   return `
     <div class="choices" role="radiogroup">
       ${OPTIONS[type]
+        .filter(([value]) => withDecline || value !== 'nee')
         .map(
           ([value, label]) => `
         <label class="choice">
@@ -515,7 +554,7 @@ function renderForm(invitation, previous) {
             ${choicesHtml(`att-${i}`, invitation.type, answer?.attendance)}
             <div class="field diet" ${!answer || answer.attendance === 'nee' ? 'hidden' : ''}>
               <label for="diet-${i}">Dieetwensen of allergieën <span class="hint">(optioneel)</span></label>
-              <input id="diet-${i}" name="diet-${i}" value="${escapeHtml(answer?.diet)}">
+              <input id="diet-${i}" name="diet-${i}" maxlength="300" value="${escapeHtml(answer?.diet)}">
             </div>
           </fieldset>`;
         })
@@ -534,16 +573,16 @@ function renderForm(invitation, previous) {
           <div class="plus-one-details" ${plusOne ? '' : 'hidden'}>
             <div class="field">
               <label for="plus-name">Naam introducé</label>
-              <input id="plus-name" name="plus-name" autocomplete="off" value="${escapeHtml(plusOne?.name)}">
+              <input id="plus-name" name="plus-name" autocomplete="off" maxlength="100" value="${escapeHtml(plusOne?.name)}">
             </div>
             ${
               invitation.type === 'dag'
-                ? `<div class="field"><label>Aanwezig</label>${choicesHtml('att-plus', 'dag', plusOne?.attendance)}</div>`
+                ? `<div class="field"><label>Aanwezig</label>${choicesHtml('att-plus', 'dag', plusOne?.attendance, { withDecline: false })}</div>`
                 : ''
             }
             <div class="field">
               <label for="plus-diet">Dieetwensen of allergieën <span class="hint">(optioneel)</span></label>
-              <input id="plus-diet" name="plus-diet" value="${escapeHtml(plusOne?.diet)}">
+              <input id="plus-diet" name="plus-diet" maxlength="300" value="${escapeHtml(plusOne?.diet)}">
             </div>
           </div>
         </fieldset>`
@@ -552,11 +591,11 @@ function renderForm(invitation, previous) {
 
       <div class="field">
         <label for="song">Welk nummer mag de DJ niet vergeten? <span class="hint">(optioneel)</span></label>
-        <input id="song" name="song" value="${escapeHtml(previous?.song)}">
+        <input id="song" name="song" maxlength="200" value="${escapeHtml(previous?.song)}">
       </div>
       <div class="field">
         <label for="message">Nog iets dat we moeten weten? <span class="hint">(optioneel)</span></label>
-        <textarea id="message" name="message">${escapeHtml(previous?.message)}</textarea>
+        <textarea id="message" name="message" maxlength="2000">${escapeHtml(previous?.message)}</textarea>
       </div>
       <div class="field wish-field">
         <label for="wish">Een lieve boodschap of wens voor ons <span class="hint">(optioneel)</span></label>
@@ -583,10 +622,8 @@ function renderForm(invitation, previous) {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const result = readForm(form, invitation);
-    if (result.error) {
-      $('#form-error').textContent = result.error;
-      return;
-    }
+    $('#form-error').textContent = result.error ?? '';
+    if (result.error) return;
     const button = $('button[type="submit"]', form);
     button.disabled = true;
     button.textContent = 'Versturen…';
@@ -595,7 +632,7 @@ function renderForm(invitation, previous) {
       renderConfirmation(invitation, saved);
       $('#rsvp').scrollIntoView();
     } catch {
-      $('#form-error').textContent = 'Er ging iets mis bij het versturen. Probeer het nog eens.';
+      $('#form-error').textContent = 'Het versturen is niet gelukt. Je antwoord is nog niet opgeslagen. Controleer je internetverbinding en probeer het nog eens.';
       button.disabled = false;
       button.textContent = 'Verstuur antwoord';
     }
@@ -714,7 +751,7 @@ function downloadCalendar(attending) {
   link.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
   link.download = 'bruiloft-maaike-en-bas.ics';
   link.click();
-  URL.revokeObjectURL(link.href);
+  setTimeout(() => URL.revokeObjectURL(link.href), 10000);
 }
 
 init();

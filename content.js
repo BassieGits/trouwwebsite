@@ -5,11 +5,9 @@ export const CONTENT = {
   couple: 'Maaike & Bas',
   date: '2027-06-25',
   utcOffset: '+02:00', // zomertijd
-  dateLong: 'Vrijdag 25 juni 2027',
   rsvpDeadline: '1 mei 2027', // TODO: definitieve deadline
 
   // Foto's: zet hier het pad naar een foto (bijv. 'assets/foto-strand.jpg').
-  // Zolang er geen foto is, tonen we een lege lijst als voorbeeld van de plek.
   photos: {
     portrait: 'assets/moment-roos.jpg', // in de zon onder de uitnodigingstekst
     portraitFocus: { position: '54% 22%', zoom: 1.3 }, // ingezoomd op de kus
