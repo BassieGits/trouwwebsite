@@ -308,6 +308,28 @@ body.names-landed .hero-names { animation: none; }
 .envelope.lit .env-seal-button { display: none; }
 .env-seal-button:focus-visible { outline: 1px solid #fff; outline-offset: 6px; }
 
+/* Overslaan: onderaan in beeld, voor wie de opening al kent of niet wil afwachten */
+.env-skip {
+  position: absolute;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  padding: 12px 18px;
+  border: 0;
+  background: none;
+  font: 500 10px var(--font-sans);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fffaf2;
+  text-shadow: 0 1px 6px rgba(70, 45, 20, 0.75);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}
+.envelope:not(.ready) .env-skip { visibility: hidden; }
+.env-skip:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
+
 .envelope.fade { opacity: 0; }
 .envelope.no-anim,
 .envelope.no-anim * { transition: none !important; }

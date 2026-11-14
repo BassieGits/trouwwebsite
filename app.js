@@ -115,26 +115,51 @@ async function setupEnvelope(invitationLoading) {
   envelope.classList.add('ready'); // nu pas "Tik op het zegel" tonen
 
   const music = prepareMusic('assets/strand-feestje.m4a');
+  const timers = [];
+  const later = (action, ms) => timers.push(setTimeout(action, ms));
+  let endFlight = () => {}; // ruimt de vliegende namen op als de opening wordt overgeslagen
+
+  // Wie de opening al eens heeft gezien, kan meteen door; tijdens het openen kan iedereen overslaan.
+  const skipButton = $('#env-skip');
+  const remember = (key, storage) => {
+    try {
+      storage.setItem(key, '1');
+    } catch {}
+  };
+  let seenBefore = false;
+  try {
+    seenBefore = localStorage.getItem('envelope-seen') === '1';
+  } catch {}
+  skipButton.hidden = !seenBefore;
+  skipButton.addEventListener('click', () => {
+    timers.forEach(clearTimeout);
+    light.stop();
+    music.stop();
+    endFlight();
+    remember('envelope-opened', sessionStorage);
+    remove();
+  });
 
   const open = () => {
     music.play();
     // zonlicht over folie en zegel → zegel breekt → kleppen open → zee met namen → namen vliegen naar de site
-    const step = (className, ms) => setTimeout(() => envelope.classList.add(className), ms);
+    const step = (className, ms) => later(() => envelope.classList.add(className), ms);
     envelope.classList.add('lit');
     light.start();
-    try {
-      sessionStorage.setItem('envelope-opened', '1');
-    } catch {}
+    remember('envelope-opened', sessionStorage);
+    remember('envelope-seen', localStorage);
+    skipButton.textContent = 'Overslaan';
+    skipButton.hidden = false;
     step('crack', 1450);
     step('open', 1800);
     step('names', 3100);
-    setTimeout(() => fillWithSunset(1), 2900);
+    later(() => fillWithSunset(1), 2900);
     // de zonsondergang met jullie namen blijft even rustig in beeld
-    setTimeout(flyNames, 6800);
-    setTimeout(() => fillWithSunset(1.06), 6800);
+    later(flyNames, 6800);
+    later(() => fillWithSunset(1.06), 6800);
     step('fade', 7200);
-    setTimeout(() => document.body.classList.remove('is-sealed'), 7800);
-    setTimeout(() => {
+    later(() => document.body.classList.remove('is-sealed'), 7800);
+    later(() => {
       light.stop();
       remove();
     }, 10000);
@@ -183,13 +208,18 @@ async function setupEnvelope(invitationLoading) {
       }
       follow = requestAnimationFrame(track);
     });
-    setTimeout(() => {
+    const land = () => {
       cancelAnimationFrame(follow);
       // eerst de echte namen tonen (zonder hun eigen intro-animatie), dan pas de vliegende kopie weg
       document.body.classList.add('names-landed');
       document.body.classList.remove('names-handoff');
       requestAnimationFrame(() => requestAnimationFrame(() => flight.remove()));
-    }, 2700);
+    };
+    const landing = setTimeout(land, 2700);
+    endFlight = () => {
+      clearTimeout(landing);
+      land();
+    };
   };
   // ?envstate=lit,crack,open,names&envt=1.2 zet de envelop stil in die stand (om te testen en te vergelijken).
   const params = new URLSearchParams(location.search);
@@ -202,7 +232,7 @@ async function setupEnvelope(invitationLoading) {
 
   $('#seal').addEventListener('click', open, { once: true });
   envelope.addEventListener('click', (event) => {
-    if (event.target !== $('#seal') && !envelope.classList.contains('lit')) $('#seal').click();
+    if (event.target !== $('#seal') && event.target !== skipButton && !envelope.classList.contains('lit')) $('#seal').click();
   });
 }
 
@@ -222,6 +252,9 @@ function prepareMusic(src) {
       } catch {
         // geen geluid is geen probleem; de opening werkt gewoon door
       }
+    },
+    stop() {
+      audio.pause();
     },
   };
 }
@@ -268,7 +301,7 @@ async function showInvitation(invitation) {
   main.innerHTML = renderSections(invitation, plural);
   main.hidden = false;
 
-  startCountdown();
+  startCountdown(isDay);
   setupReveal();
   setupFloatingRsvp();
 
@@ -465,8 +498,10 @@ function renderMoments() {
     </section>`;
 }
 
-function startCountdown() {
-  const wedding = new Date(`${CONTENT.date}T${CONTENT.program[0].time}:00${CONTENT.utcOffset}`);
+// Daggasten tellen af naar de ontvangst, avondgasten naar het begin van het avondfeest.
+function startCountdown(isDay) {
+  const first = CONTENT.program.find((item) => isDay || !item.dagOnly);
+  const wedding = new Date(`${CONTENT.date}T${first.time}:00${CONTENT.utcOffset}`);
   const cells = Object.fromEntries([...document.querySelectorAll('[data-unit]')].map((el) => [el.dataset.unit, el]));
 
   const tick = () => {

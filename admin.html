@@ -42,6 +42,7 @@
           <h2 class="title">Uitnodigingen</h2>
           <div class="admin-actions">
             <button class="button button-ghost" id="export" type="button">Exporteer naar Excel</button>
+            <p class="muted small" id="backup-info"></p>
           </div>
         </div>
         <div class="filters" id="filters" role="tablist">
@@ -56,7 +57,7 @@
       </section>
 
       <section class="admin-section">
-        <h2 class="title">Uitnodiging toevoegen</h2>
+        <h2 class="title" id="add-title">Uitnodiging toevoegen</h2>
         <form id="add-form" class="add-form">
           <div class="field">
             <label for="add-household">Naam huishouden <span class="hint">(voor jullie overzicht)</span></label>
@@ -79,8 +80,27 @@
           </div>
           <label class="check"><input type="checkbox" id="add-plus"> Mag een introducé meenemen</label>
           <p class="form-error" id="add-error" role="alert"></p>
-          <button class="button" type="submit">Toevoegen</button>
+          <button class="button" type="submit" id="add-submit">Toevoegen</button>
+          <button class="button button-ghost" type="button" id="add-cancel" hidden>Annuleren</button>
         </form>
+      </section>
+
+      <section class="admin-section">
+        <h2 class="title">Gastenlijst inladen</h2>
+        <div class="import">
+          <p>Selecteer in jullie gastenlijst (Google Sheets of Excel) de rijen <strong>met de kopregel erbij</strong>, kopieer ze en plak ze hieronder. Je ziet eerst wat er wordt aangemaakt; er gebeurt niets tot je op de knop klikt.</p>
+          <ul class="import-help">
+            <li><strong>Naam</strong> (verplicht): één persoon per rij. De voornaam komt op de uitnodiging.</li>
+            <li><strong>Huishouden</strong>: wie dezelfde waarde heeft, krijgt samen één uitnodiging en één link. Zonder deze kolom krijgt iedereen een eigen uitnodiging.</li>
+            <li><strong>Uitnodiging</strong>: "Dag + avond" of "Avond". Leeg telt als dag + avond.</li>
+            <li><strong>Introducé</strong>: "Ja" als dit huishouden iemand mag meenemen.</li>
+            <li><strong>Aanhef</strong> (optioneel): bijvoorbeeld "familie De Vries". Anders gebruiken we de voornamen.</li>
+            <li>Rijen met <strong>Uitgenodigd</strong> anders dan "Ja" worden overgeslagen. Andere kolommen worden genegeerd.</li>
+          </ul>
+          <textarea id="import-text" rows="6" placeholder="Plak hier de gekopieerde rijen…"></textarea>
+          <div id="import-preview"></div>
+          <button class="button" type="button" id="import-run" hidden>Aanmaken</button>
+        </div>
       </section>
 
       <section class="admin-section">

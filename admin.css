@@ -94,6 +94,17 @@ body.admin { background: var(--paper); }
 .plain-list li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .plain-list strong { display: block; font-weight: 500; color: var(--ink); }
 
+/* Gastenlijst inladen */
+.import { max-width: 760px; }
+.import-help { margin: 12px 0 18px; padding-left: 20px; font-size: 14px; }
+.import textarea { width: 100%; padding: 12px; border: 1px solid var(--sand); background: #fdfbf7; font: 400 13px/1.5 ui-monospace, Menlo, monospace; color: var(--ink); white-space: pre; }
+.import-summary { margin: 18px 0 10px; font-size: 14px; }
+.import-problem { color: #9a5a45; }
+#import-run, #add-cancel { margin-top: 14px; }
+#add-cancel { width: 100%; }
+#backup-info { margin: 8px 0 0; text-align: right; }
+.notice-action { margin-left: 12px; }
+
 /* Wensen van gasten, als kaartjes */
 .wish-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 22px 0 0; padding: 0; list-style: none; }
 .wish-list li { padding: 20px 22px; background: #fdfbf7; border: 1px solid var(--line); }
