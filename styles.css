@@ -630,6 +630,135 @@ body.names-landed .hero-names { animation: none; }
   .polaroid figcaption { font-size: 24px; }
 }
 
+/* Hoe het begon: swipen naar rechts */
+#momenten { overflow-x: clip; } /* een weggeswipet kaartje mag de pagina niet breder maken */
+.swipe { margin: 38px auto 6px; max-width: 340px; }
+.swipe-intro { margin: 0 0 22px; font: italic 300 20px/1.45 var(--font-serif); color: var(--text); }
+.swipe-deck { position: relative; aspect-ratio: 3 / 4; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.swipe-card {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--sand);
+  box-shadow: 0 2px 4px rgba(47, 56, 51, 0.08), 0 18px 40px rgba(47, 56, 51, 0.18);
+  cursor: grab;
+  text-align: left;
+  will-change: transform;
+}
+.swipe-card:active { cursor: grabbing; }
+/* het kaartje eronder ligt iets kleiner klaar */
+.swipe-card:not(:last-of-type) { transform: scale(0.95) translateY(10px); }
+.swipe-card.is-flying { transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1); }
+.swipe-card.is-gone { pointer-events: none; }
+.swipe-card:has(~ .swipe-card.is-gone):not(.is-gone) { transform: none; transition: transform 0.45s ease; }
+.swipe-card.is-shaking { animation: swipe-shake 0.5s ease 0.15s; }
+@keyframes swipe-shake {
+  20%, 60% { translate: -8px 0; }
+  40%, 80% { translate: 8px 0; }
+}
+.swipe-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.swipe-info {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 70px 20px 18px;
+  background: linear-gradient(to top, rgba(28, 32, 30, 0.88) 0%, rgba(28, 32, 30, 0.6) 55%, transparent);
+  color: #fdfbf7;
+}
+.swipe-info h3 { margin: 0; font: 400 34px/1 var(--font-serif); }
+.swipe-since { margin: 6px 0 8px; font: 500 10px/1.4 var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; color: #cfe0d1; }
+.swipe-since::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #9fd2a6; vertical-align: 1px; }
+.swipe-bio { margin: 0; font: 300 13.5px/1.55 var(--font-sans); }
+.swipe-stamp {
+  position: absolute;
+  top: 26px;
+  padding: 4px 14px 2px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  color: #fff;
+  font: 500 30px/1.1 var(--font-serif);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+}
+.swipe-stamp-yes { left: 20px; background: rgba(99, 117, 104, 0.88); transform: rotate(-14deg); opacity: var(--yes, 0); }
+.swipe-stamp-no { right: 20px; background: rgba(176, 106, 82, 0.88); transform: rotate(14deg); opacity: var(--no, 0); }
+
+.swipe-buttons { display: flex; justify-content: center; gap: 26px; margin-top: 22px; }
+.swipe-btn {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fdfbf7;
+  box-shadow: 0 6px 16px rgba(47, 56, 51, 0.12);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.swipe-btn:hover { transform: scale(1.08); box-shadow: 0 10px 22px rgba(47, 56, 51, 0.16); }
+.swipe-btn:active { transform: scale(0.94); }
+.swipe-btn svg { width: 24px; height: 24px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.swipe-btn-no svg { stroke: var(--muted); width: 20px; height: 20px; }
+.swipe-btn-yes { width: 66px; height: 66px; }
+.swipe-btn-yes svg { stroke: #c4765b; fill: #e7b3a0; width: 28px; height: 28px; }
+.swipe-note { min-height: 3.2em; margin: 14px auto 0; max-width: 30ch; font: italic 300 18px/1.45 var(--font-serif); color: var(--sage-deep); }
+
+.swipe-match {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 30%, #fdfbf7, var(--paper) 70%);
+  box-shadow: inset 0 0 0 1px var(--line);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.swipe-match.is-shown { opacity: 1; }
+.swipe-match-photos { display: flex; justify-content: center; margin-bottom: 8px; }
+.swipe-match-photos img {
+  width: 104px;
+  height: 104px;
+  border: 4px solid #fdfbf7;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(47, 56, 51, 0.18);
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1.15) 0.15s;
+}
+.swipe-match-photos img:first-child { transform: translateX(-70px) rotate(-8deg); }
+.swipe-match-photos img:last-child { margin-left: -18px; transform: translateX(70px) rotate(8deg); }
+.swipe-match.is-shown .swipe-match-photos img:first-child { transform: rotate(-6deg); }
+.swipe-match.is-shown .swipe-match-photos img:last-child { transform: rotate(6deg); }
+.swipe-match-title {
+  margin: 4px 0 0;
+  font: 400 clamp(54px, 15vw, 66px)/1.1 var(--font-script);
+  color: var(--ink);
+  transform: scale(0.85);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1.2) 0.4s;
+}
+.swipe-match.is-shown .swipe-match-title { transform: none; }
+.swipe-match-text { margin: 6px 0 0; max-width: 24ch; font: italic 300 19px/1.45 var(--font-serif); color: var(--text); }
+.swipe-again {
+  margin-top: 18px;
+  padding: 6px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  font: 500 10px/1.6 var(--font-sans);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
 /* Locatie */
 .venue-name { margin: 10px 0 0; font: 300 clamp(36px, 10vw, 52px) / 1.1 var(--font-serif); color: var(--ink); }
 .venue-address { margin-top: 14px; font-style: normal; letter-spacing: 0.04em; }
@@ -749,10 +878,10 @@ body.names-landed .hero-names { animation: none; }
 
 /* Het openen van de envelop is een korte animatie die de gast zelf start; die blijft staan. */
 @media (prefers-reduced-motion: reduce) {
-  /* de opening (envelop en de namen die daaruit naar de site vliegen) speelt altijd af */
-  :not(.envelope, .envelope *, .names-flight),
-  :not(.envelope, .envelope *, .names-flight)::before,
-  :not(.envelope, .envelope *, .names-flight)::after { animation: none !important; transition-duration: 0.01s !important; transition-delay: 0s !important; }
+  /* de opening (envelop en de namen die daaruit naar de site vliegen) en het swipen spelen altijd af */
+  :not(.envelope, .envelope *, .names-flight, .swipe *),
+  :not(.envelope, .envelope *, .names-flight, .swipe *)::before,
+  :not(.envelope, .envelope *, .names-flight, .swipe *)::after { animation: none !important; transition-duration: 0.01s !important; transition-delay: 0s !important; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
 }

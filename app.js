@@ -304,6 +304,7 @@ async function showInvitation(invitation) {
   startCountdown(isDay);
   setupReveal();
   setupFloatingRsvp();
+  setupSwipe();
 
   loadRsvp(invitation);
 }
@@ -480,6 +481,7 @@ function renderMoments() {
       <div class="section-inner reveal">
         <p class="eyebrow">Wij samen</p>
         <h2 class="title">${escapeHtml(moments.title)}</h2>
+        ${renderMatch()}
         <p class="lead">${escapeHtml(moments.intro)}</p>
       </div>
       <ul class="polaroids">
@@ -496,6 +498,172 @@ function renderMoments() {
           .join('')}
       </ul>
     </section>`;
+}
+
+// Hoe het begon: profielkaartjes om naar rechts te swipen (of op het hartje te tikken).
+function renderMatch() {
+  const { match } = CONTENT;
+  if (!match?.profiles?.length) return '';
+  const cards = match.profiles
+    .map(
+      (p, i) => `
+        <article class="swipe-card" data-index="${i}" aria-label="Profiel van ${escapeHtml(p.name)}"${i ? ' aria-hidden="true"' : ''}>
+          <img src="${p.photo}" alt="" loading="lazy" style="object-position:${p.position ?? '50% 50%'}" draggable="false">
+          <span class="swipe-stamp swipe-stamp-yes" aria-hidden="true">Ja!</span>
+          <span class="swipe-stamp swipe-stamp-no" aria-hidden="true">Nee</span>
+          <div class="swipe-info">
+            <h3>${escapeHtml(p.name)}</h3>
+            <p class="swipe-since">${escapeHtml(match.since ?? '')}</p>
+            <p class="swipe-bio">${escapeHtml(p.bio)}</p>
+          </div>
+        </article>`,
+    )
+    .reverse() // het eerste profiel ligt bovenop
+    .join('');
+  return `
+    <div class="swipe" id="swipe">
+      <p class="swipe-intro">${escapeHtml(match.intro)}</p>
+      <div class="swipe-deck">
+        ${cards}
+        <div class="swipe-match" hidden>
+          <div class="swipe-match-photos" aria-hidden="true">
+            ${match.profiles.map((p) => `<img src="${p.photo}" alt="" style="object-position:${p.position ?? '50% 50%'}">`).join('')}
+          </div>
+          <p class="swipe-match-title">${escapeHtml(match.title)}</p>
+          <p class="swipe-match-text">${escapeHtml(match.text)}</p>
+          <button type="button" class="swipe-again">Nog een keer swipen</button>
+        </div>
+      </div>
+      <div class="swipe-buttons">
+        <button type="button" class="swipe-btn swipe-btn-no" aria-label="Naar links: nee">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <button type="button" class="swipe-btn swipe-btn-yes" aria-label="Naar rechts: ja">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        </button>
+      </div>
+      <p class="swipe-note" aria-live="polite"></p>
+    </div>`;
+}
+
+function setupSwipe() {
+  const root = $('#swipe');
+  if (!root) return;
+  const { match } = CONTENT;
+  const deck = $('.swipe-deck', root);
+  const note = $('.swipe-note', root);
+  const buttons = $('.swipe-buttons', root);
+  const matchCard = $('.swipe-match', root);
+  const cards = () => [...root.querySelectorAll('.swipe-card:not(.is-gone)')].sort((a, b) => a.dataset.index - b.dataset.index);
+  const THRESHOLD = 90;
+  let lefts = 0;
+  let busy = false;
+
+  const setDrag = (card, x) => {
+    card.style.transform = `translateX(${x}px) rotate(${x / 18}deg)`;
+    card.style.setProperty('--yes', Math.max(0, Math.min(1, x / THRESHOLD)));
+    card.style.setProperty('--no', Math.max(0, Math.min(1, -x / THRESHOLD)));
+  };
+
+  const like = (card) => {
+    busy = true;
+    note.textContent = '';
+    card.classList.add('is-flying');
+    setDrag(card, Math.max(deck.offsetWidth, 320) * 1.4);
+    card.classList.add('is-gone');
+    const next = cards()[0];
+    if (next) next.removeAttribute('aria-hidden');
+    setTimeout(() => {
+      card.hidden = true;
+      busy = false;
+      if (!next) showMatch();
+    }, 450);
+  };
+
+  const refuse = (card) => {
+    note.textContent = match.left[Math.min(lefts, match.left.length - 1)];
+    lefts += 1;
+    card.classList.add('is-flying');
+    setDrag(card, 0);
+    card.classList.remove('is-shaking');
+    void card.offsetWidth;
+    card.classList.add('is-shaking');
+  };
+
+  const showMatch = () => {
+    buttons.inert = true; // onzichtbaar maar ruimte houden, zodat de pagina niet verspringt
+    buttons.style.visibility = 'hidden';
+    matchCard.hidden = false;
+    requestAnimationFrame(() => matchCard.classList.add('is-shown'));
+    $('.swipe-again', root).focus({ preventScroll: true });
+  };
+
+  $('.swipe-again', root).addEventListener('click', () => {
+    matchCard.classList.remove('is-shown');
+    matchCard.hidden = true;
+    buttons.inert = false;
+    buttons.style.visibility = '';
+    note.textContent = '';
+    lefts = 0;
+    root.querySelectorAll('.swipe-card').forEach((card, i, all) => {
+      card.hidden = false;
+      card.classList.remove('is-gone', 'is-flying', 'is-shaking');
+      card.style.transform = '';
+      card.style.removeProperty('--yes');
+      card.style.removeProperty('--no');
+      // de eerste in de lijst (het laatste profiel) ligt onderop
+      if (i === all.length - 1) card.removeAttribute('aria-hidden');
+      else card.setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  $('.swipe-btn-yes', root).addEventListener('click', () => {
+    const card = cards()[0];
+    if (card && !busy) like(card);
+  });
+  $('.swipe-btn-no', root).addEventListener('click', () => {
+    const card = cards()[0];
+    if (!card || busy) return;
+    card.classList.remove('is-flying');
+    setDrag(card, -60);
+    requestAnimationFrame(() => requestAnimationFrame(() => refuse(card)));
+  });
+
+  // Slepen met vinger of muis; verticaal scrollen op de telefoon blijft gewoon werken.
+  let drag = null;
+  deck.addEventListener('pointerdown', (event) => {
+    const card = event.target.closest('.swipe-card');
+    if (!card || busy || card !== cards()[0] || event.button > 0) return;
+    drag = { card, startX: event.clientX, startY: event.clientY, x: 0, active: false, id: event.pointerId };
+  });
+  deck.addEventListener('pointermove', (event) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (!drag.active) {
+      if (Math.abs(dx) < 8) return;
+      if (Math.abs(dy) > Math.abs(dx)) { drag = null; return; } // de gast scrolt
+      drag.active = true;
+      drag.card.classList.remove('is-flying', 'is-shaking');
+      deck.setPointerCapture(event.pointerId);
+    }
+    drag.x = dx;
+    setDrag(drag.card, dx);
+  });
+  const release = (event) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const { card, x, active } = drag;
+    drag = null;
+    if (!active) return;
+    if (x > THRESHOLD) like(card);
+    else if (x < -THRESHOLD) refuse(card);
+    else {
+      card.classList.add('is-flying');
+      setDrag(card, 0);
+    }
+  };
+  deck.addEventListener('pointerup', release);
+  deck.addEventListener('pointercancel', release);
 }
 
 // Daggasten tellen af naar de ontvangst, avondgasten naar het begin van het avondfeest.

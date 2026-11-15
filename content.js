@@ -39,6 +39,33 @@ export const CONTENT = {
 
   // Onze happy moments: polaroids met een handgeschreven onderschrift.
   // `position` bepaalt welk deel van de foto zichtbaar blijft (zoals CSS object-position).
+  // Hoe het begon: twee profielkaartjes om naar rechts te swipen, daarna "It's a match!".
+  match: {
+    intro: 'Hoe het begon? Met twee duimen naar rechts. Doe het ons maar na:',
+    profiles: [
+      {
+        name: 'Bas',
+        photo: 'assets/tinder-bas.jpg',
+        position: '53% 40%',
+        bio: 'Lacht graag, zoals je ziet. Houdt van lange diners, strandtenten en een goed gesprek. Zoekt iemand die net zo hard om zijn grappen lacht als hijzelf.',
+      },
+      {
+        name: 'Maaike',
+        photo: 'assets/tinder-maaike.jpg',
+        position: '50% 35%',
+        bio: 'Festivalgek en dansfanaat. Gezichtsuitdrukkingen gratis. Zoekt iemand die het bijhoudt op de dansvloer, tot het licht aangaat.',
+      },
+    ],
+    since: 'Actief in februari 2017',
+    left: [
+      'Naar links? Dat hebben wij gelukkig niet gedaan. Probeer het nog eens.',
+      'Echt niet. Hier swipen we alleen naar rechts.',
+      'Het hartje zit rechts, hoor.',
+    ],
+    title: "It's a match!",
+    text: 'Begin februari 2017 swipeten we allebei naar rechts. De rest is geschiedenis.',
+  },
+
   moments: {
     title: 'Onze happy moments',
     intro: 'Van festivalweide tot strand, van scooter tot theaterstoel: een greep uit onze mooiste momenten samen. Op 25 juni komt daar de allermooiste bij.',
