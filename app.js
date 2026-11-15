@@ -603,8 +603,9 @@ function setupSwipe() {
   };
 
   const showMatch = () => {
-    buttons.inert = true; // onzichtbaar maar ruimte houden, zodat de pagina niet verspringt
-    buttons.style.visibility = 'hidden';
+    // na de match zijn de knoppen, de pil en de meldingen niet meer nodig
+    buttons.hidden = true;
+    note.hidden = true;
     matchCard.hidden = false;
     requestAnimationFrame(() => matchCard.classList.add('is-shown'));
   };
@@ -612,8 +613,8 @@ function setupSwipe() {
   $('.swipe-again', root).addEventListener('click', () => {
     matchCard.classList.remove('is-shown');
     matchCard.hidden = true;
-    buttons.inert = false;
-    buttons.style.visibility = '';
+    buttons.hidden = false;
+    note.hidden = false;
     note.textContent = '';
     lefts = 0;
     root.querySelectorAll('.swipe-card').forEach((card, i, all) => {

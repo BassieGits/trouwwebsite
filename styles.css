@@ -632,7 +632,9 @@ body.names-landed .hero-names { animation: none; }
 
 /* Hoe het begon: swipen naar rechts */
 #momenten { overflow-x: clip; } /* een weggeswipet kaartje mag de pagina niet breder maken */
-.swipe { margin: 38px auto 6px; max-width: 340px; }
+.swipe { margin: 38px auto 0; max-width: 340px; }
+.swipe + .lead { margin-top: 10px; }
+.swipe:has(.swipe-match:not([hidden])) + .lead { margin-top: 34px; }
 .swipe-intro { margin: 0 0 24px; font: italic 300 22px/1.4 var(--font-serif); color: var(--ink); }
 .swipe-how {
   display: inline-flex;
@@ -725,7 +727,7 @@ body.names-landed .hero-names { animation: none; }
 .swipe-btn-no svg { stroke: var(--muted); width: 20px; height: 20px; }
 .swipe-btn-yes { width: 66px; height: 66px; }
 .swipe-btn-yes svg { stroke: #c4765b; fill: #e7b3a0; width: 28px; height: 28px; }
-.swipe-note { min-height: 3.2em; margin: 14px auto 0; max-width: 30ch; font: italic 300 18px/1.45 var(--font-serif); color: var(--sage-deep); }
+.swipe-note { min-height: 2.9em; margin: 10px auto 0; max-width: 30ch; font: italic 300 18px/1.45 var(--font-serif); color: var(--sage-deep); }
 
 .swipe-match {
   position: absolute;
