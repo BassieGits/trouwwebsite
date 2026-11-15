@@ -5,7 +5,7 @@ export const CONTENT = {
   couple: 'Maaike & Bas',
   date: '2027-06-25',
   utcOffset: '+02:00', // zomertijd
-  rsvpDeadline: '1 mei 2027', // TODO: definitieve deadline
+  rsvpDeadline: '14 mei 2027',
 
   // Foto's: zet hier het pad naar een foto (bijv. 'assets/foto-strand.jpg').
   photos: {
@@ -80,7 +80,7 @@ export const CONTENT = {
 
   moments: {
     title: 'Onze happy moments',
-    intro: 'Van festivalweide tot strand, van scooter tot theaterstoel: een greep uit onze mooiste momenten samen. Op 25 juni komt daar de allermooiste bij.',
+    intro: 'In die 10 jaar daarna kwamen er heel veel mooie momenten bij. Van festivalweide tot strand, van scooter tot theaterstoel: hieronder een kleine greep uit onze mooiste momenten samen. En dan komt op 25 juni daar de allermooiste bij.',
     items: [
       { src: 'assets/moment-strand.jpg', caption: 'Wind in de haren', position: '50% 40%' },
       { src: 'assets/moment-scooter.jpg', caption: 'Samen op de scooter', position: '50% 45%' },
