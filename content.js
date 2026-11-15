@@ -54,8 +54,9 @@ export const CONTENT = {
         name: 'Maaike',
         age: 40,
         photo: 'assets/tinder-maaike.jpg',
-        position: '50% 35%',
-        bio: 'Festivalgek en dansfanaat. Gezichtsuitdrukkingen gratis. Zoekt iemand die het bijhoudt op de dansvloer, tot het licht aangaat.',
+        position: '52% 28%',
+        zoom: 1.6, // ingezoomd op haar gezicht
+        bio: 'Zonnebril op, voeten in het zand, een drankje bij zonsondergang: mijn ideale avond. Zoekt iemand die daar net zo blij van wordt en daarna nog wil dansen.',
       },
     ],
     since: 'Actief in februari 2017',

@@ -508,7 +508,7 @@ function renderMatch() {
     .map(
       (p, i) => `
         <article class="swipe-card" data-index="${i}" aria-label="Profiel van ${escapeHtml(p.name)}"${i ? ' aria-hidden="true"' : ''}>
-          <img src="${p.photo}" alt="" loading="lazy" style="object-position:${p.position ?? '50% 50%'}" draggable="false">
+          <img src="${p.photo}" alt="" loading="lazy" style="object-position:${p.position ?? '50% 50%'}${p.zoom ? `;transform:scale(${p.zoom});transform-origin:${p.position ?? '50% 50%'}` : ''}" draggable="false">
           <span class="swipe-stamp swipe-stamp-yes" aria-hidden="true">Ja!</span>
           <span class="swipe-stamp swipe-stamp-no" aria-hidden="true">Nee</span>
           <div class="swipe-info">
