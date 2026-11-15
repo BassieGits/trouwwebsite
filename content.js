@@ -41,7 +41,7 @@ export const CONTENT = {
   // `position` bepaalt welk deel van de foto zichtbaar blijft (zoals CSS object-position).
   // Hoe het begon: twee profielkaartjes om naar rechts te swipen, daarna "It's a match!".
   match: {
-    intro: 'Hieronder zie je hoe wij begonnen. Met twee swipes naar rechts. Doe het ons maar na!',
+    intro: 'Hieronder zie je hoe wij begonnen. Swipe, swipe. Doe het ons maar na!',
     how: 'Swipe naar rechts of tik op ♥︎',
     profiles: [
       {
