@@ -524,6 +524,7 @@ function renderMatch() {
   return `
     <div class="swipe" id="swipe">
       <p class="swipe-intro">${escapeHtml(match.intro)}</p>
+      ${match.how ? `<p class="swipe-how"><span>${escapeHtml(match.how)}</span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M29 2l7 6-7 6"/></svg></p>` : ''}
       <div class="swipe-deck">
         ${cards}
         <div class="swipe-match" hidden>
@@ -629,6 +630,26 @@ function setupSwipe() {
     setDrag(card, -60);
     requestAnimationFrame(() => requestAnimationFrame(() => refuse(card)));
   });
+
+  // Zodra de kaartjes in beeld komen, geeft het bovenste een duwtje naar rechts: zo zie je dat je kunt swipen.
+  let touched = false;
+  root.addEventListener('pointerdown', () => { touched = true; }, { once: true });
+  const nudge = () => {
+    const card = cards()[0];
+    if (touched || busy || !card || card.dataset.index !== '0') return;
+    card.classList.add('is-flying');
+    setDrag(card, 70);
+    setTimeout(() => { if (!touched) setDrag(card, 0); }, 650);
+  };
+  new IntersectionObserver(
+    (entries, observer) => {
+      if (!entries[0].isIntersecting) return;
+      observer.disconnect();
+      setTimeout(nudge, 700);
+      setTimeout(nudge, 5000); // nog een keer als er nog niet geswipet is
+    },
+    { threshold: 0.35 },
+  ).observe(deck);
 
   // Slepen met vinger of muis; verticaal scrollen op de telefoon blijft gewoon werken.
   let drag = null;

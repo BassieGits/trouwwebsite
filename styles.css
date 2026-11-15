@@ -633,7 +633,23 @@ body.names-landed .hero-names { animation: none; }
 /* Hoe het begon: swipen naar rechts */
 #momenten { overflow-x: clip; } /* een weggeswipet kaartje mag de pagina niet breder maken */
 .swipe { margin: 38px auto 6px; max-width: 340px; }
-.swipe-intro { margin: 0 0 22px; font: italic 300 20px/1.45 var(--font-serif); color: var(--text); }
+.swipe-intro { margin: 0; font: italic 300 22px/1.4 var(--font-serif); color: var(--ink); }
+.swipe-how {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 24px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--sage-deep);
+  color: #fdfbf7;
+  font: 500 10.5px/1.4 var(--font-sans);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.swipe-how svg { flex: none; width: 28px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; animation: swipe-arrow 1.6s ease-in-out infinite; }
+@keyframes swipe-arrow { 50% { translate: 6px 0; } }
 .swipe-deck { position: relative; aspect-ratio: 3 / 4; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .swipe-card {
   position: absolute;
