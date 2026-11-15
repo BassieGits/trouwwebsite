@@ -524,7 +524,6 @@ function renderMatch() {
   return `
     <div class="swipe" id="swipe">
       <p class="swipe-intro">${escapeHtml(match.intro)}</p>
-      ${match.how ? `<p class="swipe-how"><span>${escapeHtml(match.how)}</span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M29 2l7 6-7 6"/></svg></p>` : ''}
       <div class="swipe-deck">
         ${cards}
         <div class="swipe-match" hidden>
@@ -536,6 +535,8 @@ function renderMatch() {
           <button type="button" class="swipe-again">Nog een keer swipen</button>
         </div>
       </div>
+      <div class="swipe-controls">
+      ${match.how ? `<p class="swipe-how"><span>${escapeHtml(match.how)}</span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M29 2l7 6-7 6"/></svg></p>` : ''}
       <div class="swipe-buttons">
         <button type="button" class="swipe-btn swipe-btn-no" aria-label="Naar links: nee">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -543,6 +544,7 @@ function renderMatch() {
         <button type="button" class="swipe-btn swipe-btn-yes" aria-label="Naar rechts: ja">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
         </button>
+      </div>
       </div>
       <p class="swipe-note" aria-live="polite"></p>
     </div>`;
@@ -554,11 +556,12 @@ function setupSwipe() {
   const { match } = CONTENT;
   const deck = $('.swipe-deck', root);
   const note = $('.swipe-note', root);
-  const buttons = $('.swipe-buttons', root);
+  const buttons = $('.swipe-controls', root);
   const matchCard = $('.swipe-match', root);
   const cards = () => [...root.querySelectorAll('.swipe-card:not(.is-gone)')].sort((a, b) => a.dataset.index - b.dataset.index);
   const THRESHOLD = 90;
   let lefts = 0;
+  let lastLeft = -1;
   let busy = false;
 
   const setDrag = (card, x) => {
@@ -583,7 +586,14 @@ function setupSwipe() {
   };
 
   const refuse = (card) => {
-    note.textContent = match.left[Math.min(lefts, match.left.length - 1)];
+    // eerst altijd de eerste tekst, daarna willekeurig, maar nooit twee keer dezelfde achter elkaar
+    let pick = 0;
+    if (lefts > 0 && match.left.length > 1) {
+      do pick = Math.floor(Math.random() * match.left.length);
+      while (pick === lastLeft);
+    }
+    lastLeft = pick;
+    note.textContent = match.left[pick];
     lefts += 1;
     card.classList.add('is-flying');
     setDrag(card, 0);
@@ -597,7 +607,6 @@ function setupSwipe() {
     buttons.style.visibility = 'hidden';
     matchCard.hidden = false;
     requestAnimationFrame(() => matchCard.classList.add('is-shown'));
-    $('.swipe-again', root).focus({ preventScroll: true });
   };
 
   $('.swipe-again', root).addEventListener('click', () => {

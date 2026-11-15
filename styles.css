@@ -633,12 +633,12 @@ body.names-landed .hero-names { animation: none; }
 /* Hoe het begon: swipen naar rechts */
 #momenten { overflow-x: clip; } /* een weggeswipet kaartje mag de pagina niet breder maken */
 .swipe { margin: 38px auto 6px; max-width: 340px; }
-.swipe-intro { margin: 0; font: italic 300 22px/1.4 var(--font-serif); color: var(--ink); }
+.swipe-intro { margin: 0 0 24px; font: italic 300 22px/1.4 var(--font-serif); color: var(--ink); }
 .swipe-how {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin: 14px 0 24px;
+  margin: 24px 0 0;
   padding: 9px 18px;
   border-radius: 999px;
   background: var(--sage-deep);
@@ -705,7 +705,7 @@ body.names-landed .hero-names { animation: none; }
 .swipe-stamp-yes { left: 20px; background: rgba(99, 117, 104, 0.88); transform: rotate(-14deg); opacity: var(--yes, 0); }
 .swipe-stamp-no { right: 20px; background: rgba(176, 106, 82, 0.88); transform: rotate(14deg); opacity: var(--no, 0); }
 
-.swipe-buttons { display: flex; justify-content: center; gap: 26px; margin-top: 22px; }
+.swipe-buttons { display: flex; justify-content: center; gap: 26px; margin-top: 18px; }
 .swipe-btn {
   display: grid;
   place-items: center;
@@ -765,6 +765,7 @@ body.names-landed .hero-names { animation: none; }
 }
 .swipe-match.is-shown .swipe-match-title { transform: none; }
 .swipe-match-text { margin: 6px 0 0; max-width: 24ch; font: italic 300 19px/1.45 var(--font-serif); color: var(--text); }
+.swipe-again:focus:not(:focus-visible), .swipe-btn:focus:not(:focus-visible) { outline: none; }
 .swipe-again {
   margin-top: 18px;
   padding: 6px 2px;
