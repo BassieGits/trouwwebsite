@@ -512,7 +512,8 @@ function renderMatch() {
           <span class="swipe-stamp swipe-stamp-yes" aria-hidden="true">Ja!</span>
           <span class="swipe-stamp swipe-stamp-no" aria-hidden="true">Nee</span>
           <div class="swipe-info">
-            <h3>${escapeHtml(p.name)}</h3>
+            <h3>${escapeHtml(p.name)}${p.age ? ` <span class="swipe-age">${p.age}</span>` : ''}</h3>
+            ${match.distance ? `<p class="swipe-distance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>${escapeHtml(match.distance)}</p>` : ''}
             <p class="swipe-since">${escapeHtml(match.since ?? '')}</p>
             <p class="swipe-bio">${escapeHtml(p.bio)}</p>
           </div>

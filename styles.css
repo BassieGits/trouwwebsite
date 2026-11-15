@@ -666,7 +666,10 @@ body.names-landed .hero-names { animation: none; }
   color: #fdfbf7;
 }
 .swipe-info h3 { margin: 0; font: 400 34px/1 var(--font-serif); }
-.swipe-since { margin: 6px 0 8px; font: 500 10px/1.4 var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; color: #cfe0d1; }
+.swipe-age { font-weight: 300; font-size: 28px; }
+.swipe-distance { display: flex; align-items: center; gap: 5px; margin: 6px 0 0; font: 400 12.5px/1.4 var(--font-sans); color: #e9e3d8; }
+.swipe-distance svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.swipe-since { margin: 4px 0 8px; font: 500 10px/1.4 var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; color: #cfe0d1; }
 .swipe-since::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #9fd2a6; vertical-align: 1px; }
 .swipe-bio { margin: 0; font: 300 13.5px/1.55 var(--font-sans); }
 .swipe-stamp {

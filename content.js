@@ -45,18 +45,21 @@ export const CONTENT = {
     profiles: [
       {
         name: 'Bas',
+        age: 44,
         photo: 'assets/tinder-bas.jpg',
         position: '53% 40%',
         bio: 'Lacht graag, zoals je ziet. Houdt van lange diners, strandtenten en een goed gesprek. Zoekt iemand die net zo hard om zijn grappen lacht als hijzelf.',
       },
       {
         name: 'Maaike',
+        age: 40,
         photo: 'assets/tinder-maaike.jpg',
         position: '50% 35%',
         bio: 'Festivalgek en dansfanaat. Gezichtsuitdrukkingen gratis. Zoekt iemand die het bijhoudt op de dansvloer, tot het licht aangaat.',
       },
     ],
     since: 'Actief in februari 2017',
+    distance: '15 km afstand',
     left: [
       'Naar links? Dat hebben wij gelukkig niet gedaan. Probeer het nog eens.',
       'Echt niet. Hier swipen we alleen naar rechts.',
