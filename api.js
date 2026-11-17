@@ -33,7 +33,7 @@ async function rpc(name, args) {
 
 // type: 'dag' (dag + avond uitgenodigd) of 'avond' (alleen het avondfeest)
 export const DEMO_INVITATIONS = {
-  DAGDEMO: { household: 'Voorbeeld: Jan & Petra', type: 'dag', guests: ['Jan', 'Petra'], plusOne: false },
+  DAGDEMO: { household: 'Voorbeeld: Joost & Sandra', type: 'dag', guests: ['Joost', 'Sandra'], plusOne: false },
   AVONDDEMO: { household: 'Voorbeeld: Sanne', type: 'avond', guests: ['Sanne'], plusOne: true },
   FAMDEMO: { household: 'Voorbeeld: familie met kinderen', type: 'dag', guests: ['Ruud', 'Ellen', 'Tim', 'Noor'], plusOne: false },
 };

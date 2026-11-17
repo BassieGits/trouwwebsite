@@ -255,7 +255,7 @@ body.names-landed .hero-names { animation: none; }
   position: absolute;
   left: 0;
   right: 0;
-  top: 29%;
+  top: 24%; /* midden in de bovenste driehoek */
   margin: 0;
   text-align: center;
   font: 300 clamp(13px, 3.6vw, 16px) / 1.5 var(--font-sans);
@@ -267,7 +267,7 @@ body.names-landed .hero-names { animation: none; }
   position: absolute;
   left: 0;
   right: 0;
-  top: 62.5%; /* op de onderklep, net onder het zegel */
+  top: 72%; /* midden in de onderste driehoek, waar die breed genoeg is */
   margin: 0;
   text-align: center;
   font: 500 clamp(10px, 2.8vw, 11px) var(--font-sans);
