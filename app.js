@@ -391,9 +391,9 @@ function renderSections(invitation, plural) {
           <p class="eyebrow">${isDay ? 'Uitnodiging' : 'Uitnodiging avondfeest'}</p>
           <h2 class="title">Wij zeggen <em>ja</em>!</h2>
           <p class="lead">${escapeHtml(personalize(CONTENT.intro[invitation.type], plural))}</p>
-          <p class="rsvp-prompt">${rsvpPrompt(plural)}</p>
         </div>
         ${sunPhotoHtml(CONTENT.photos.portrait, CONTENT.photos.portraitFocus)}
+        <p class="rsvp-prompt reveal">${rsvpPrompt(plural)}</p>
       </div>
     </section>
 
