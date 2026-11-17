@@ -18,12 +18,13 @@ export const CONTENT = {
   venue: {
     name: 'Strandclub Witsand',
     address: ['Zeereep 103', '2202 NW Noordwijk'],
+    siteUrl: 'https://witsand.nl/',
     mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Strandclub+Witsand+Zeereep+103+Noordwijk',
   },
 
   intro: {
-    dag: 'Op vrijdag 25 juni 2027 zeggen wij ja tegen elkaar, met onze voeten in het zand van Noordwijk. Het zou ons ontzettend blij maken als {jij} deze dag met ons {wilt} vieren, van het jawoord tot de laatste dans.',
-    avond: 'Op vrijdag 25 juni 2027 zeggen wij ja tegen elkaar. \'s Avonds vieren we dat met een feest aan zee, en daar {mag} {jij} natuurlijk niet ontbreken.',
+    dag: 'Op vrijdag 25 juni 2027 zeggen wij ja tegen elkaar, met onze voeten in het zand van Noordwijk. Wij zouden het ontzettend leuk vinden als {jij} deze dag samen met ons {wilt} vieren, vanaf het jawoord tot en met de laatste dans.',
+    avond: 'Op vrijdag 25 juni 2027 zeggen wij ja tegen elkaar. \'s Avonds vieren we dat met een feest aan zee, en daar {mag} {jij} natuurlijk niet bij ontbreken.',
   },
 
   // `dagOnly: true` zien alleen daggasten. `photo` is optioneel.
@@ -31,10 +32,10 @@ export const CONTENT = {
   program: [
     { time: '14:30', title: 'Ontvangst', text: 'Inloop vanaf 14:15, met een glas fizz aan zee', icon: 'glasses', photo: 'assets/sfeer-parasol.jpg', dagOnly: true },
     { time: '15:00', title: 'Ceremonie', text: 'Het jawoord op het strand', icon: 'rings', photo: 'assets/sfeer-ceremonie.jpg', dagOnly: true },
-    { time: '16:00', title: 'Toost & borrel', text: 'Proosten, felicitaties en een borrel aan zee', icon: 'cake', photo: 'assets/sfeer-vuurkorf.jpg', dagOnly: true },
+    { time: '16:00', title: 'Toost & borrel', text: 'Proosten met een bubbeltje op het strand', icon: 'cake', photo: 'assets/sfeer-vuurkorf.jpg', dagOnly: true },
     { time: '18:00', title: 'Walking dinner', text: 'Proeven en bijpraten, met live cooking', icon: 'dinner', photo: 'assets/sfeer-lampions.jpg', dagOnly: true },
-    { time: '20:15', title: 'Avondfeest', text: 'Om 20:45 de openingsdans, daarna dansen tot middernacht', icon: 'music', photo: 'assets/sfeer-avondfeest.jpg' },
-    { time: '24:00', title: 'Einde', text: 'Tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
+    { time: '20:15', title: 'Avondfeest', text: 'Inloop om 20:15. Om 20:45 openen wij het feest, waarna we dansen tot middernacht', icon: 'music', photo: 'assets/sfeer-avondfeest.jpg' },
+    { time: '24:00', title: 'Einde', text: 'We sluiten de avond af met mooie herinneringen: tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
   ],
 
   // Onze happy moments: polaroids met een handgeschreven onderschrift.
@@ -57,7 +58,7 @@ export const CONTENT = {
         photo: 'assets/tinder-maaike.jpg',
         position: '52% 28%',
         zoom: 1.6, // ingezoomd op haar gezicht
-        bio: 'Zonnebril op, voeten in het zand, een drankje bij zonsondergang: mijn ideale avond. Zoekt iemand die daar net zo blij van wordt en daarna nog wil dansen.',
+        bio: 'Zonnebril op, voetjes in het zand, een drankje bij zonsondergang: mijn ideale avond. Zoekt iemand die daar net zo blij van wordt en daarna nog wil dansen tot in de late uurtjes.',
       },
     ],
     since: 'Actief in februari 2017',
@@ -80,7 +81,7 @@ export const CONTENT = {
 
   moments: {
     title: 'Onze happy moments',
-    intro: 'In die 10 jaar daarna kwamen er heel veel mooie momenten bij. Van festivalweide tot strand, van scooter tot theaterstoel: hieronder een kleine greep uit onze mooiste momenten samen. En dan komt op 25 juni daar de allermooiste bij.',
+    intro: 'In die 10 jaar daarna kwamen er heel veel mooie momenten bij, van ons samen en met onze 5 kids. Van festivals tot strand, van samen op de scooter tot in het theater, van avondjes uit tot samen cozy op de bank: hieronder een kleine greep uit onze mooiste momenten. En op 25 juni 2027 komt daar natuurlijk de allermooiste bij!',
     items: [
       { src: 'assets/moment-strand.jpg', caption: 'Wind in de haren', position: '50% 40%' },
       { src: 'assets/moment-scooter.jpg', caption: 'Samen op de scooter', position: '50% 45%' },
@@ -96,7 +97,7 @@ export const CONTENT = {
 
   dresscode: {
     title: 'Summer chic',
-    text: 'Denk aan luchtige stoffen en zachte zomerse tinten. We vieren aan zee: houd rekening met zand onder je voeten en neem voor de avond iets warms mee.',
+    text: 'Denk aan zomers, stijlvol en comfortabel, in zachte natuurlijke tinten. We vieren ons feest aan zee: houd rekening met zand onder je voeten en neem voor de avond iets warms mee.',
     // TODO: kleuren naar wens aanpassen
     colors: [
       { name: 'Ivoor', hex: '#f1ebe0' },
@@ -110,11 +111,18 @@ export const CONTENT = {
   faq: [
     {
       q: 'Zijn kinderen welkom?',
-      a: 'Hoe leuk we de kleintjes ook vinden, we maken er een feest voor volwassenen van. Kinderen uit de familie zijn wel welkom: zij staan dan bij naam op de uitnodiging.',
+      a: 'We vieren deze dag in gezelschap van familie en vrienden. Kinderen die mee uitgenodigd zijn, staan bij naam op de uitnodiging.',
     },
     { q: 'Mag ik iemand meenemen?', a: 'Als je een introducé mag meenemen, zie je dat terug in het RSVP-formulier.' },
-    { q: 'Hoe zit het met parkeren?', a: 'Informatie over parkeren en bereikbaarheid volgt.' }, // TODO
-    { q: 'Hebben jullie een cadeautip?', a: 'Informatie volgt.' }, // TODO
+    {
+      q: 'Hoe zit het met parkeren?',
+      a: 'Rondom Strandclub Witsand zijn verschillende betaalde parkeerterreinen en een parkeergarage. Wij raden Parkeergarage Oude Zeeweg, Parking Koningin Astrid Boulevard, Parkeerplaats Wantveld of de parkeerplaats aan de Nieuwe Zeeweg aan. Vanaf daar loop je in een paar minuten naar Witsand.',
+    },
+    {
+      q: 'Een cadeautip?',
+      // TODO: links naar de goede doelen toevoegen
+      a: 'Jullie aanwezigheid op onze trouwdag is voor ons het allermooiste cadeau! Wil je toch iets geven, dan waarderen we een donatie aan het Alzheimer Fonds en/of het Prinses Máxima Centrum: twee goede doelen die ons erg na aan het hart liggen.',
+    },
     { q: 'Waar kan ik overnachten?', a: 'Informatie volgt.' }, // TODO
     { q: 'Ik wil iets voorbereiden. Bij wie kan ik terecht?', a: 'De contactgegevens van onze ceremoniemeester volgen.' }, // TODO
   ],

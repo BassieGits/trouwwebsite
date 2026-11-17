@@ -292,7 +292,7 @@ async function showInvitation(invitation) {
 
   $('#greeting').textContent = `Lieve ${invitation.greeting || joinNames(invitation.guests)}`;
   if (!isDay) {
-    $('.hero-lead').textContent = 'Wij gaan trouwen en geven een feest';
+    $('.hero-lead').textContent = 'Wij gaan trouwen en geven een feest!';
     $('#hero-place').textContent = `Strandclub Witsand · vanaf ${eveningStart}`;
   }
   $('#scroll-cue').hidden = false;
@@ -380,7 +380,7 @@ function renderSections(invitation, plural) {
       <div class="section-inner">
         <div class="reveal">
           <p class="eyebrow">${isDay ? 'Uitnodiging' : 'Uitnodiging avondfeest'}</p>
-          <h2 class="title">Wij zeggen <em>ja</em></h2>
+          <h2 class="title">Wij zeggen <em>ja</em>!</h2>
           <p class="lead">${escapeHtml(personalize(CONTENT.intro[invitation.type], plural))}</p>
         </div>
         ${sunPhotoHtml(CONTENT.photos.portrait, CONTENT.photos.portraitFocus)}
@@ -417,6 +417,7 @@ function renderSections(invitation, plural) {
         <p class="eyebrow">Locatie</p>
         <h2 class="venue-name">${escapeHtml(venue.name)}</h2>
         <address class="venue-address">${venue.address.map(escapeHtml).join('<br>')}</address>
+        ${venue.siteUrl ? `<p class="venue-site"><a href="${venue.siteUrl}" target="_blank" rel="noopener">${escapeHtml(venue.siteUrl.replace(/^https?:\/\/(www\.)?|\/$/g, ''))}</a></p>` : ''}
         <svg class="horizon" viewBox="0 0 300 40" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
           <path d="M120 30a30 30 0 0 1 60 0" /><path d="M0 30h300" /><path d="M60 36h180" opacity=".6" />
         </svg>
@@ -460,7 +461,7 @@ function renderSections(invitation, plural) {
     <section class="section section-tint" id="rsvp">
       <div class="section-inner reveal">
         <p class="eyebrow">RSVP</p>
-        <h2 class="title">${plural ? 'Zijn jullie erbij?' : 'Ben je erbij?'}</h2>
+        <h2 class="title">${plural ? 'Vieren jullie met ons mee?' : 'Vier je met ons mee?'}</h2>
         <p class="lead">Laat het ons uiterlijk ${CONTENT.rsvpDeadline} weten.</p>
       </div>
       <div class="rsvp-card" id="rsvp-card"></div>
@@ -825,11 +826,11 @@ function renderForm(invitation, previous) {
       }
 
       <div class="field">
-        <label for="song">Welk nummer mag de DJ niet vergeten? <span class="hint">(optioneel)</span></label>
+        <label for="song">Welk nummer krijgt jou gegarandeerd de dansvloer op? <span class="hint">(optioneel)</span></label>
         <input id="song" name="song" maxlength="200" value="${escapeHtml(previous?.song)}">
       </div>
       <div class="field">
-        <label for="message">Nog iets dat we moeten weten? <span class="hint">(optioneel)</span></label>
+        <label for="message">Nog iets dat je met ons wilt delen? <span class="hint">(optioneel)</span></label>
         <textarea id="message" name="message" maxlength="2000">${escapeHtml(previous?.message)}</textarea>
       </div>
       <div class="field wish-field">
@@ -920,7 +921,7 @@ function renderConfirmation(invitation, rsvp) {
 
   const title = attending.length ? 'Dank je wel' : 'Wat jammer';
   const text = attending.length
-    ? `Wat fijn dat ${plural ? 'jullie' : 'je'} erbij ${plural ? 'zijn' : 'bent'}. We kijken ernaar uit!`
+    ? `Leuk dat ${plural ? 'jullie' : 'je'} erbij ${plural ? 'zijn' : 'bent'}. We kijken ernaar uit!`
     : `Jammer dat ${plural ? 'jullie' : 'je'} er niet bij ${plural ? 'kunnen' : 'kunt'} zijn. Bedankt voor het laten weten.`;
 
   $('#rsvp-card').innerHTML = `
