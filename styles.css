@@ -785,6 +785,8 @@ body.names-landed .hero-names { animation: none; }
 .venue-name { margin: 10px 0 0; font: 300 clamp(36px, 10vw, 52px) / 1.1 var(--font-serif); color: var(--ink); }
 .venue-address { margin-top: 14px; font-style: normal; letter-spacing: 0.04em; }
 .venue-site { margin: 6px 0 0; }
+.faq-links { display: flex; flex-direction: column; gap: 6px; }
+.faq-links a { color: var(--sage-deep); text-underline-offset: 3px; }
 .venue-site a { color: var(--sage-deep); text-underline-offset: 3px; }
 .horizon { display: block; width: min(80%, 300px); margin: 34px auto 32px; color: var(--sage); }
 

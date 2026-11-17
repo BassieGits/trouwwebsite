@@ -451,6 +451,7 @@ function renderSections(invitation, plural) {
             <details>
               <summary>${escapeHtml(item.q)}</summary>
               <p>${escapeHtml(item.a)}</p>
+              ${item.links ? `<p class="faq-links">${item.links.map((l) => `<a href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`).join('')}</p>` : ''}
             </details>`,
             )
             .join('')}

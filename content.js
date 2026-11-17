@@ -42,7 +42,7 @@ export const CONTENT = {
   // `position` bepaalt welk deel van de foto zichtbaar blijft (zoals CSS object-position).
   // Hoe het begon: twee profielkaartjes om naar rechts te swipen, daarna "It's a match!".
   match: {
-    intro: 'Hieronder zie je hoe wij begonnen. Swipe, swipe. Doe het ons maar na!',
+    intro: 'Weet je hoe het allemaal begon? In januari 2017, met slechts 2 swipes! Doe het ons maar na!',
     how: 'Swipe naar rechts of tik op ♥︎',
     profiles: [
       {
@@ -61,7 +61,7 @@ export const CONTENT = {
         bio: 'Zonnebril op, voetjes in het zand, een drankje bij zonsondergang: mijn ideale avond. Zoekt iemand die daar net zo blij van wordt en daarna nog wil dansen tot in de late uurtjes.',
       },
     ],
-    since: 'Actief in februari 2017',
+    since: 'Actief in januari 2017',
     distance: '15 km afstand',
     left: [
       'Naar links? Dat hebben wij gelukkig niet gedaan. Probeer het nog eens.',
@@ -76,7 +76,7 @@ export const CONTENT = {
       'Zelfs je duim weet beter. Naar rechts ermee.',
     ],
     title: "It's a match!",
-    text: 'Begin februari 2017 swipeten we allebei naar rechts. De rest is geschiedenis.',
+    text: 'In januari 2017 swipeten we allebei naar rechts. De rest is geschiedenis.',
   },
 
   moments: {
@@ -120,8 +120,11 @@ export const CONTENT = {
     },
     {
       q: 'Een cadeautip?',
-      // TODO: links naar de goede doelen toevoegen
-      a: 'Jullie aanwezigheid op onze trouwdag is voor ons het allermooiste cadeau! Wil je toch iets geven, dan waarderen we een donatie aan het Alzheimer Fonds en/of het Prinses Máxima Centrum: twee goede doelen die ons erg na aan het hart liggen.',
+      a: 'Jullie aanwezigheid op onze trouwdag is voor ons het allermooiste cadeau! Wil je toch iets geven, dan waarderen we een donatie aan Alzheimer Nederland en/of het Prinses Máxima Centrum: twee goede doelen die ons erg na aan het hart liggen.',
+      links: [
+        { label: 'Doneer aan Alzheimer Nederland', url: 'https://online.alzheimer-nederland.nl/donatie' },
+        { label: 'Doneer aan het Prinses Máxima Centrum', url: 'https://foundation.prinsesmaximacentrum.nl/nl/doneer-direct' },
+      ],
     },
     { q: 'Waar kan ik overnachten?', a: 'Informatie volgt.' }, // TODO
     { q: 'Ik wil iets voorbereiden. Bij wie kan ik terecht?', a: 'De contactgegevens van onze ceremoniemeester volgen.' }, // TODO
