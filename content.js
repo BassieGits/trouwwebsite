@@ -38,7 +38,7 @@ export const CONTENT = {
     { time: '24:00', title: 'Einde', text: 'We sluiten de avond af met mooie herinneringen: tijd om naar huis te gaan', icon: 'moon', photo: 'assets/sfeer-zonsondergang.jpg' },
   ],
 
-  // Onze happy moments: polaroids met een handgeschreven onderschrift.
+  // Onze happy moments: polaroids. `caption` (optioneel) zet een handgeschreven onderschrift eronder.
   // `position` bepaalt welk deel van de foto zichtbaar blijft (zoals CSS object-position).
   // Hoe het begon: twee profielkaartjes om naar rechts te swipen, daarna "It's a match!".
   match: {
@@ -83,15 +83,20 @@ export const CONTENT = {
     title: 'Onze happy moments',
     intro: 'In die 10 jaar daarna kwamen er heel veel mooie momenten bij, van ons samen en met onze 5 kids. Van festivals tot strand, van samen op de scooter tot in het theater, van avondjes uit tot samen cozy op de bank: hieronder een kleine greep uit onze mooiste momenten. En op 25 juni 2027 komt daar natuurlijk de allermooiste bij!',
     items: [
-      { src: 'assets/moment-strand.jpg', caption: 'Wind in de haren', position: '50% 40%' },
-      { src: 'assets/moment-scooter.jpg', caption: 'Samen op de scooter', position: '50% 45%' },
-      { src: 'assets/moment-festival.jpg', caption: 'Festivalliefde', position: '50% 35%' },
-      { src: 'assets/moment-boot.jpg', caption: 'Op het water', position: '48% 48%', zoom: 1.5 },
-      { src: 'assets/moment-ei.jpg', caption: 'Gewoon even gek doen', position: '50% 50%' },
-      { src: 'assets/moment-herfst.jpg', caption: 'Herfstkus', position: '45% 45%' },
-      { src: 'assets/moment-feest.jpg', caption: 'Dansen tot het licht aangaat', position: '50% 55%' },
-      { src: 'assets/moment-theater.jpg', caption: 'Avondje uit', position: '50% 45%' },
-      { src: 'assets/moment-avond.jpg', caption: 'Nog één liedje', position: '50% 55%' },
+      { src: 'assets/moment-strand.jpg', position: '50% 40%' },
+      { src: 'assets/moment-gezin.jpg', position: '49% 40%', alt: 'Maaike en Bas met de kids' },
+      { src: 'assets/moment-scooter.jpg', position: '50% 45%' },
+      { src: 'assets/moment-theater2.jpg', position: '50% 60%' },
+      { src: 'assets/moment-festival.jpg', position: '50% 35%' },
+      { src: 'assets/moment-boot.jpg', position: '48% 48%', zoom: 1.5 },
+      { src: 'assets/moment-disco.jpg', position: '50% 55%' },
+      { src: 'assets/moment-ei.jpg', position: '50% 50%' },
+      { src: 'assets/moment-kids.jpg', position: '60% 50%', alt: 'Maaike en Bas met de kids' },
+      { src: 'assets/moment-herfst.jpg', position: '45% 45%' },
+      { src: 'assets/moment-tunnel.jpg', position: '50% 75%' },
+      { src: 'assets/moment-theater.jpg', position: '50% 45%' },
+      { src: 'assets/moment-avond.jpg', position: '50% 55%' },
+      { src: 'assets/moment-zonsondergang.jpg', position: '53% 78%' },
     ],
   },
 

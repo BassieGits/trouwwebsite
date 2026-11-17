@@ -603,6 +603,7 @@ body.names-landed .hero-names { animation: none; }
 .polaroid:nth-child(3n) figure { --tilt: -0.6deg; }
 .polaroid:nth-child(4n) figure { --tilt: 2.4deg; }
 .polaroid-photo { display: block; aspect-ratio: 1; overflow: hidden; background: var(--sand); }
+.polaroid figure:not(:has(figcaption)) { padding-bottom: 40px; } /* zonder onderschrift: de brede witte rand van een echte polaroid */
 .polaroid-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .polaroid figcaption {
   padding: 10px 4px 14px;

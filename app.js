@@ -492,8 +492,8 @@ function renderMoments() {
             (item) => `
           <li class="polaroid">
             <figure>
-              <span class="polaroid-photo"><img src="${item.src}" alt="${escapeHtml(item.caption)}" loading="lazy" style="object-position:${item.position ?? '50% 50%'}${item.zoom ? `;transform:scale(${item.zoom})` : ''}"></span>
-              <figcaption>${escapeHtml(item.caption)}</figcaption>
+              <span class="polaroid-photo"><img src="${item.src}" alt="${escapeHtml(item.alt ?? item.caption ?? 'Maaike en Bas')}" loading="lazy" style="object-position:${item.position ?? '50% 50%'}${item.zoom ? `;transform:scale(${item.zoom})` : ''}"></span>
+              ${item.caption ? `<figcaption>${escapeHtml(item.caption)}</figcaption>` : ''}
             </figure>
           </li>`,
           )
