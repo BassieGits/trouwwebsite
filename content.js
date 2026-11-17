@@ -122,8 +122,8 @@ export const CONTENT = {
       q: 'Een cadeautip?',
       a: 'Jullie aanwezigheid op onze trouwdag is voor ons het allermooiste cadeau! Wil je toch iets geven, dan waarderen we een donatie aan Alzheimer Nederland en/of het Prinses Máxima Centrum: twee goede doelen die ons erg na aan het hart liggen.',
       links: [
-        { label: 'Doneer aan Alzheimer Nederland', url: 'https://online.alzheimer-nederland.nl/donatie' },
-        { label: 'Doneer aan het Prinses Máxima Centrum', url: 'https://foundation.prinsesmaximacentrum.nl/nl/doneer-direct' },
+        { label: 'Onze actiepagina voor Alzheimer Nederland', url: 'https://vierjefeestje.alzheimer-nederland.nl/maaike-en-bastiaan-sommeling' },
+        { label: 'Onze actiepagina voor het Prinses Máxima Centrum', url: 'https://particulier.maximaalinactie.nl/fundraisers/maaike-van-der-meer' },
       ],
     },
     { q: 'Waar kan ik overnachten?', a: 'Informatie volgt.' }, // TODO
