@@ -361,10 +361,10 @@ function sunPhotoHtml(src, focus) {
 // Vraagt gasten onder de uitnodigingstekst om het RSVP-formulier onderaan in te vullen.
 function rsvpPrompt(plural) {
   const deadline = escapeHtml(CONTENT.rsvpDeadline.replace(/\s\d{4}$/, '')); // "14 mei 2027" wordt "14 mei"
-  const link = '<a href="#rsvp">Onderaan deze pagina</a>';
+  // bewust geen link: gasten zien zo eerst de hele uitnodiging
   return plural
-    ? `Laten jullie ons uiterlijk ${deadline} weten of jullie erbij zijn? ${link} vinden jullie de RSVP.`
-    : `Laat je ons uiterlijk ${deadline} weten of je erbij bent? ${link} vind je de RSVP.`;
+    ? `Laten jullie ons uiterlijk ${deadline} weten of jullie erbij zijn? Als jullie naar beneden scrollen, vinden jullie onderaan de RSVP.`
+    : `Laat je ons uiterlijk ${deadline} weten of je erbij bent? Als je naar beneden scrollt, vind je onderaan de RSVP.`;
 }
 
 function renderSections(invitation, plural) {
@@ -763,13 +763,17 @@ function setupReveal() {
 function setupFloatingRsvp() {
   const button = $('#rsvp-float');
   button.hidden = false;
-  const state = { pastHero: false, atRsvp: false };
-  const update = () => button.classList.toggle('visible', state.pastHero && !state.atRsvp);
+  // De knop verschijnt pas als de gast voorbij het programma is gescrold, zodat iedereen eerst
+  // de uitnodiging en het programma ziet. Daarna blijft hij beschikbaar, ook bij terugscrollen.
+  const state = { pastProgram: false, atRsvp: false };
+  const update = () => button.classList.toggle('visible', state.pastProgram && !state.atRsvp);
 
   new IntersectionObserver(([entry]) => {
-    state.pastHero = !entry.isIntersecting;
-    update();
-  }).observe($('.hero'));
+    if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+      state.pastProgram = true;
+      update();
+    }
+  }).observe($('#programma'));
 
   new IntersectionObserver(
     ([entry]) => {
