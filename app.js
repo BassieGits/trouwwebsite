@@ -528,6 +528,7 @@ function renderMatch() {
       <p class="swipe-intro">${escapeHtml(match.intro)}</p>
       <div class="swipe-deck">
         ${cards}
+        <div class="swipe-toast" aria-hidden="true"><span class="swipe-toast-text"></span><small>Maaike &amp; Bas</small></div>
         <div class="swipe-match" hidden>
           <div class="swipe-match-photos" aria-hidden="true">
             ${match.profiles.map((p) => `<img src="${p.photo}" alt="" style="object-position:${p.position ?? '50% 50%'}">`).join('')}
@@ -557,7 +558,10 @@ function setupSwipe() {
   if (!root) return;
   const { match } = CONTENT;
   const deck = $('.swipe-deck', root);
-  const note = $('.swipe-note', root);
+  const note = $('.swipe-note', root); // voor schermlezers
+  const toast = $('.swipe-toast', root);
+  let toastTimer;
+  const hideToast = () => { clearTimeout(toastTimer); toast.classList.remove('is-shown'); };
   const buttons = $('.swipe-controls', root);
   const matchCard = $('.swipe-match', root);
   const cards = () => [...root.querySelectorAll('.swipe-card:not(.is-gone)')].sort((a, b) => a.dataset.index - b.dataset.index);
@@ -575,6 +579,7 @@ function setupSwipe() {
   const like = (card) => {
     busy = true;
     note.textContent = '';
+    hideToast();
     card.classList.add('is-flying');
     setDrag(card, Math.max(deck.offsetWidth, 320) * 1.4);
     card.classList.add('is-gone');
@@ -596,6 +601,13 @@ function setupSwipe() {
     }
     lastLeft = pick;
     note.textContent = match.left[pick];
+    // het berichtje komt als een chatbericht over de foto binnen en verdwijnt na een paar seconden
+    $('.swipe-toast-text', toast).textContent = match.left[pick];
+    toast.classList.remove('is-shown');
+    void toast.offsetWidth;
+    toast.classList.add('is-shown');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 3400);
     lefts += 1;
     card.classList.add('is-flying');
     setDrag(card, 0);

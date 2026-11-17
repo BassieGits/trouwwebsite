@@ -728,7 +728,30 @@ body.names-landed .hero-names { animation: none; }
 .swipe-btn-no svg { stroke: var(--muted); width: 20px; height: 20px; }
 .swipe-btn-yes { width: 66px; height: 66px; }
 .swipe-btn-yes svg { stroke: #c4765b; fill: #e7b3a0; width: 28px; height: 28px; }
-.swipe-note { min-height: 2.9em; margin: 10px auto 0; max-width: 30ch; font: italic 300 18px/1.45 var(--font-serif); color: var(--sage-deep); }
+.swipe-note { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* alleen voor schermlezers */
+.swipe-toast {
+  position: absolute;
+  z-index: 5;
+  left: 16px;
+  right: 16px;
+  top: 16px; /* bovenin, zodat jullie gezichten vrij blijven */
+  padding: 13px 16px 10px;
+  border-radius: 18px 18px 18px 4px;
+  background: rgba(253, 251, 247, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  backdrop-filter: blur(12px) saturate(1.15);
+  box-shadow: 0 10px 28px rgba(28, 32, 30, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  color: var(--ink);
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  transform-origin: 0 100%;
+  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.25);
+}
+.swipe-toast.is-shown { opacity: 1; transform: none; }
+.swipe-toast-text { display: block; font: italic 400 19px/1.35 var(--font-serif); }
+.swipe-toast small { display: block; margin-top: 5px; font: 500 9.5px/1.4 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage-deep); }
 
 .swipe-match {
   position: absolute;
