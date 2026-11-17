@@ -9,8 +9,8 @@ export const CONTENT = {
 
   // Foto's: zet hier het pad naar een foto (bijv. 'assets/foto-strand.jpg').
   photos: {
-    portrait: 'assets/moment-roos.jpg', // in de zon onder de uitnodigingstekst
-    portraitFocus: { position: '54% 22%', zoom: 1.3 }, // ingezoomd op de kus
+    portrait: 'assets/foto-uitnodiging.jpg', // in de zon onder de uitnodigingstekst
+    portraitFocus: { position: '43% 56%', zoom: 1.2 }, // ingezoomd op jullie gezichten
     landscape: 'assets/foto-strand.jpg', // liggend, over de volle breedte
   },
   showPhotoPlaceholders: true,
