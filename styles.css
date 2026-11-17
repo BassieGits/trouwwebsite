@@ -471,6 +471,10 @@ body.names-landed .hero-names { animation: none; }
 .section-tint { background: var(--paper-2); }
 .section-inner { max-width: 560px; margin: 0 auto; }
 
+/* vraag onder de uitnodigingstekst om onderaan te reageren */
+.rsvp-prompt { margin: 18px auto 0; max-width: 36ch; font: 400 14px/1.7 var(--font-sans); color: var(--muted); }
+.rsvp-prompt a { color: var(--sage-deep); text-underline-offset: 3px; }
+
 .lead {
   margin: 26px auto 0;
   max-width: 34ch;

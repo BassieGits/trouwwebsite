@@ -358,6 +358,15 @@ function sunPhotoHtml(src, focus) {
     </div>`;
 }
 
+// Vraagt gasten onder de uitnodigingstekst om het RSVP-formulier onderaan in te vullen.
+function rsvpPrompt(plural) {
+  const deadline = escapeHtml(CONTENT.rsvpDeadline.replace(/\s\d{4}$/, '')); // "14 mei 2027" wordt "14 mei"
+  const link = '<a href="#rsvp">Onderaan deze pagina</a>';
+  return plural
+    ? `Laten jullie ons uiterlijk ${deadline} weten of jullie erbij zijn? ${link} vinden jullie het antwoordformulier.`
+    : `Laat je ons uiterlijk ${deadline} weten of je erbij bent? ${link} vind je het antwoordformulier.`;
+}
+
 function renderSections(invitation, plural) {
   const isDay = invitation.type === 'dag';
   const program = CONTENT.program.filter((item) => isDay || !item.dagOnly);
@@ -382,6 +391,7 @@ function renderSections(invitation, plural) {
           <p class="eyebrow">${isDay ? 'Uitnodiging' : 'Uitnodiging avondfeest'}</p>
           <h2 class="title">Wij zeggen <em>ja</em>!</h2>
           <p class="lead">${escapeHtml(personalize(CONTENT.intro[invitation.type], plural))}</p>
+          <p class="rsvp-prompt">${rsvpPrompt(plural)}</p>
         </div>
         ${sunPhotoHtml(CONTENT.photos.portrait, CONTENT.photos.portraitFocus)}
       </div>
